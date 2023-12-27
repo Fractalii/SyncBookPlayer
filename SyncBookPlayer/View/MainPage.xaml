@@ -26,7 +26,7 @@
                     <DataTemplate>
                         <VerticalStackLayout WidthRequest="140" Margin="10,0,0,0" >
                             <Image Source="{Binding Cover}" HeightRequest="140" WidthRequest="140"/>
-                            <Label HorizontalOptions="Center" Text="{Binding Title}"/>
+                            <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                         </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -43,7 +43,7 @@
                     <DataTemplate>
                         <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
                             <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
-                            <Label HorizontalOptions="Center" Text="{Binding Title}"/>
+                            <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                         </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -60,7 +60,7 @@
                     <DataTemplate>
                         <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
                             <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
-                            <Label HorizontalOptions="Center" Text="{Binding Title}"/>
+                            <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                         </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
