@@ -34,6 +34,8 @@ public partial class BookPlayer : ContentPage
         playlistPicker.SelectedIndex = AudioBook.MarkIndex;
         if (AudioBook.Speed < 1)
             Speed = 1;
+        if (AudioBook.State != Book._State.Started)
+            AudioBook.State = Book._State.Started;
         //PositionSlider.Maximum = Player.Duration.TotalSeconds;
         //secret.Text = AudioBook.Playlist[AudioBook.MarkTime];
 
