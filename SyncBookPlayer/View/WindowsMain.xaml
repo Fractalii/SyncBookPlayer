@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SyncBookPlayer.View.WindowsMain"
+             Title="WindowsMain">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ContentPresenter x:Name="LeftPresenter" Content="{Binding LeftPage}" Grid.Column="0" />
+        <ContentPresenter x:Name="RightPresenter" Content="{Binding RightPage}" Grid.Column="1" />
+    </Grid>
+</ContentPage>

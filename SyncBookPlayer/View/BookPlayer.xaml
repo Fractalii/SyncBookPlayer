@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="SyncBookPlayer.View.BookPlayer"
+             xmlns:converters="clr-namespace:SyncBookPlayer.Extra"
+             xmlns:viewmodel="clr-namespace:SyncBookPlayer.ViewModel"
+             x:DataType="viewmodel:PlayerViewModel"
+             Title="">
+
+    <ContentPage.Resources>
+        <toolkit:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />
+        <converters:SecondsToStringConverter x:Key="SecondsToStringConverter" />
+    </ContentPage.Resources>
+    
+    <VerticalStackLayout>
+        <Image 
+            x:Name="BookCover"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center"
+            MaximumHeightRequest="300"
+            MaximumWidthRequest="300"/>
+
+        <Picker x:Name="playlistPicker"
+                SelectedIndexChanged="playlistPicker_SelectedIndexChanged">
+        </Picker>
+        
+        
+        <toolkit:MediaElement 
+  x:Name="Player"
+  ShouldShowPlaybackControls="True" 
+  MediaEnded="Player_MediaEnded"
+PositionChanged="Player_PositionChanged"
+            IsVisible="false"
+            MediaOpened="Player_MediaOpened"/>
+        <Slider
+            Margin="15,0,15,0"
+    x:Name="PositionSlider"
+    Grid.Row="3"
+    MinimumTrackColor="Gray"
+    DragStarted="Slider_DragStarted"
+    DragCompleted="Slider_DragCompleted"
+    Maximum="{Binding Source={x:Reference Player}, Path=Duration.TotalSeconds}"
+    Value="{Binding Source={x:Reference Player}, Path=Position.TotalSeconds}"
+            />
+        <Grid ColumnDefinitions="*,*,*"
+              Margin="0,0,0,15">
+            <Label
+                Margin="20,0,0,0"
+                HorizontalOptions="Start"
+                Text="{Binding Source={x:Reference PositionSlider}, Path=Value, Converter={StaticResource SecondsToStringConverter}}">
+            </Label>
+            <Label
+                x:Name="beforeSec"
+    Grid.Column="1"
+    HorizontalOptions="Center"
+    Text="{Binding ToListen, Converter={StaticResource SecondsToStringConverter}}">
+            </Label>
+            <Label
+                Margin="0,0,20,0"
+                Grid.Column="2"
+                HorizontalOptions="End"
+                Text="{Binding Source={x:Reference Player}, Path=Duration, Converter={StaticResource SecondsToStringConverter}}">
+            </Label>
+        </Grid>
+
+        <HorizontalStackLayout HorizontalOptions="Center" Spacing="50">
+            <ImageButton
+            x:Name="BackBtn"
+            Source="back.png"
+            BackgroundColor = "Transparent"
+            WidthRequest = "35"
+            HeightRequest = "30"
+            Clicked="BackBtn_Clicked"
+    ></ImageButton>
+
+            <ImageButton 
+            BackgroundColor="Transparent"
+            x:Name="PlayBtn"
+            Source="pause.png"
+                WidthRequest = "80"
+                HeightRequest = "80"
+            Clicked="Button_Clicked"></ImageButton>
+
+
+        <ImageButton
+            x:Name="ForwardBtn"
+            Source="forward.png"
+            BackgroundColor = "Transparent"
+                WidthRequest = "35"
+                HeightRequest = "30"
+            Clicked="ForwardBtn_Clicked"
+            ></ImageButton>
+
+
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout Grid.Row="5" Padding="0,10,0,10" Spacing="5">
+            <Label Margin="20,10">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Speed:" />
+                        <Span Text="{Binding Source={x:Reference Player}, Path=Speed}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <Button Text="-" Clicked="OnSpeedMinusClicked" />
+            <Button Text="+" Clicked="OnSpeedPlusClicked" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+    
+    
+</ContentPage>
