@@ -6,7 +6,7 @@
              xmlns:converters="clr-namespace:SyncBookPlayer.Extra"
              xmlns:viewmodel="clr-namespace:SyncBookPlayer.ViewModel"
              x:DataType="viewmodel:PlayerViewModel"
-             Title="">
+             Title="Книга">
 
     <ContentPage.Resources>
         <toolkit:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />
@@ -14,13 +14,18 @@
     </ContentPage.Resources>
     
     <VerticalStackLayout>
+        <Frame
+            HeightRequest="300"
+            WidthRequest="300"
+            Padding="0"
+            BorderColor="Transparent"
+            BackgroundColor="Transparent"
+            CornerRadius="14">
         <Image 
             x:Name="BookCover"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center"
             MaximumHeightRequest="300"
             MaximumWidthRequest="300"/>
-
+        </Frame>
         <Picker x:Name="playlistPicker"
                 SelectedIndexChanged="playlistPicker_SelectedIndexChanged">
         </Picker>

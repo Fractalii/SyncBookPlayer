@@ -25,9 +25,9 @@ public partial class BookPlayer : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
-		Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
-        Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
         BookCover.Source = AudioBook.Cover;
+        Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
+        Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
         //AudioBook.Author = "hfff";
         Player.Play();
         playlistPicker.ItemsSource = AudioBook.Playlist;
