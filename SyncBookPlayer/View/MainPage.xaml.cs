@@ -228,6 +228,7 @@ namespace SyncBookPlayer
                 }
             }
             libraryList.ItemsSource = library;
+            //var hh = library.Where(x => x.State == Book._State.NotStarted).ToList();
             /*if (connected)
             {
                 await conn.CloseAsync();

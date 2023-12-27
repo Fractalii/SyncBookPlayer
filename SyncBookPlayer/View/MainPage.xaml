@@ -16,9 +16,6 @@
                 Clicked="PickFolder"
                 IsVisible="false"></Button>
 
-            <Image
-                x:Name="gs"></Image>
-
             <CollectionView x:Name="libraryList"
                             SelectionMode="Single"
                             SelectionChanged="libraryList_SelectionChanged">
