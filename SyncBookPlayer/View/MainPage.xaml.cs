@@ -227,8 +227,10 @@ namespace SyncBookPlayer
                     library.Add(book);
                 }
             }
-            libraryList.ItemsSource = library;
-            //var hh = library.Where(x => x.State == Book._State.NotStarted).ToList();
+            //libraryList.ItemsSource = library;
+            NotStartedView.ItemsSource = library.Where(x => x.State == Book._State.NotStarted).ToList();
+            StartedView.ItemsSource = library.Where(x => x.State == Book._State.Started).ToList();
+            FinishedView.ItemsSource = library.Where(x => x.State == Book._State.Finished).ToList();
             /*if (connected)
             {
                 await conn.CloseAsync();
@@ -265,14 +267,14 @@ namespace SyncBookPlayer
 
         private async void libraryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (libraryList.SelectedItem != null) { 
+            if (((CollectionView)sender).SelectedItem != null) { 
             
                 await Shell.Current.GoToAsync(nameof(BookPlayer), true,
                 new Dictionary<string, object>
                 {
-                    {"AudioBook",libraryList.SelectedItem}
+                    {"AudioBook",((CollectionView)sender).SelectedItem}
                 });
-                libraryList.SelectedItem = null;
+                ((CollectionView)sender).SelectedItem = null;
             }   
         }
 

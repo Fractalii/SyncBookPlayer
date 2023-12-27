@@ -16,7 +16,58 @@
                 Clicked="PickFolder"
                 IsVisible="false"></Button>
 
-            <CollectionView x:Name="libraryList"
+            <Label Text="Слушаете сейчас" HorizontalOptions="Center" FontSize="Medium"/>
+
+            <CollectionView x:Name="StartedView"
+                ItemsLayout="HorizontalList"
+                SelectionMode="Single"
+                HorizontalScrollBarVisibility="Never"
+                SelectionChanged="libraryList_SelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout WidthRequest="140" Margin="10,0,0,0" >
+                            <Image Source="{Binding Cover}" HeightRequest="140" WidthRequest="140"/>
+                            <Label HorizontalOptions="Center" Text="{Binding Title}"/>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Не начато" HorizontalOptions="Center" FontSize="Medium"/>
+
+            <CollectionView x:Name="NotStartedView"
+                            ItemsLayout="HorizontalList"
+                            SelectionMode="Single"
+                            HorizontalScrollBarVisibility="Never"
+                            SelectionChanged="libraryList_SelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
+                            <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
+                            <Label HorizontalOptions="Center" Text="{Binding Title}"/>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Прослушано" HorizontalOptions="Center" FontSize="Medium"/>
+
+            <CollectionView x:Name="FinishedView"
+                ItemsLayout="HorizontalList"
+                SelectionMode="Single"
+                HorizontalScrollBarVisibility="Never"
+                SelectionChanged="libraryList_SelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
+                            <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
+                            <Label HorizontalOptions="Center" Text="{Binding Title}"/>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!--<CollectionView x:Name="libraryList"
                             SelectionMode="Single"
                             SelectionChanged="libraryList_SelectionChanged">
                 <CollectionView.ItemTemplate>
@@ -31,7 +82,7 @@
                     </DataTemplate>
                     
                 </CollectionView.ItemTemplate>
-            </CollectionView>
+            </CollectionView>-->
         </VerticalStackLayout>
     </ScrollView>
 
