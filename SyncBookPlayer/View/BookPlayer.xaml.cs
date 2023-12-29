@@ -60,6 +60,7 @@ public partial class BookPlayer : ContentPage
         else
             AudioBook.MarkTime = 0;
         //Player.Stop();
+        Player.Source = null;
         AudioBook.Save();
         base.OnDisappearing();
         //Console.WriteLine("сдох2");
