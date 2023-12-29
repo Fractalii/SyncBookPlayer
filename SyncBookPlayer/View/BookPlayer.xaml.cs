@@ -24,18 +24,18 @@ public partial class BookPlayer : ContentPage
     }
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
+        //BindingManager.Picturka = AudioBook.Cover;
         base.OnNavigatedTo(args);
-        BookCover.Source = AudioBook.Cover;
+        //BookCover.Source = AudioBook.Cover;
         Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
         Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
         //AudioBook.Author = "hfff";
-        Player.Play();
+        //Player.Play();
         playlistPicker.ItemsSource = AudioBook.Playlist;
         playlistPicker.SelectedIndex = AudioBook.MarkIndex;
-        if (AudioBook.Speed < 1)
-            Speed = 1;
-        if (AudioBook.State != Book._State.Started)
-            AudioBook.State = Book._State.Started;
+        //if (AudioBook.Speed < 1)
+        //    Speed = 1;
+        AudioBook.State = Book._State.Started;
         //PositionSlider.Maximum = Player.Duration.TotalSeconds;
         //secret.Text = AudioBook.Playlist[AudioBook.MarkTime];
 

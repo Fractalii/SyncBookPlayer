@@ -24,7 +24,8 @@
         <Image 
             x:Name="BookCover"
             MaximumHeightRequest="300"
-            MaximumWidthRequest="300"/>
+            MaximumWidthRequest="300"
+            Source="{Binding Cover}"/>
         </Frame>
         <Picker x:Name="playlistPicker"
                 SelectedIndexChanged="playlistPicker_SelectedIndexChanged">

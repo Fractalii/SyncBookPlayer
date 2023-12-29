@@ -272,7 +272,8 @@ namespace SyncBookPlayer
                 await Shell.Current.GoToAsync(nameof(BookPlayer), true,
                 new Dictionary<string, object>
                 {
-                    {"AudioBook",((CollectionView)sender).SelectedItem}
+                    {"AudioBook",((CollectionView)sender).SelectedItem},
+                    {"Cover",((Book)((CollectionView)sender).SelectedItem).Cover}
                 });
                 ((CollectionView)sender).SelectedItem = null;
             }   
