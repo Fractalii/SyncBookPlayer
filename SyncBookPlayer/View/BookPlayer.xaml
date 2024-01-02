@@ -13,21 +13,21 @@
         <converters:SecondsToStringConverter x:Key="SecondsToStringConverter" />
     </ContentPage.Resources>
     
-    <VerticalStackLayout>
+    <Grid RowDefinitions="2*,Auto,Auto,*,auto">
         <Frame
-            HeightRequest="300"
-            WidthRequest="300"
+            Grid.Row="0"
+            MaximumHeightRequest="300"
+            MaximumWidthRequest="{Binding Source={RelativeSource Self}, Path=Height}"
             Padding="0"
             BorderColor="Transparent"
             BackgroundColor="Transparent"
             CornerRadius="14">
         <Image 
             x:Name="BookCover"
-            MaximumHeightRequest="300"
-            MaximumWidthRequest="300"
             Source="{Binding Cover}"/>
         </Frame>
         <Picker x:Name="playlistPicker"
+                Grid.Row="1"
                 SelectedIndexChanged="playlistPicker_SelectedIndexChanged">
         </Picker>
         
@@ -40,9 +40,10 @@ PositionChanged="Player_PositionChanged"
             IsVisible="false"
             MediaOpened="Player_MediaOpened"/>
         <Slider
+            VerticalOptions="End"
             Margin="15,0,15,0"
     x:Name="PositionSlider"
-    Grid.Row="3"
+    Grid.Row="2"
     MinimumTrackColor="Gray"
     DragStarted="Slider_DragStarted"
     DragCompleted="Slider_DragCompleted"
@@ -50,7 +51,8 @@ PositionChanged="Player_PositionChanged"
     Value="{Binding Source={x:Reference Player}, Path=Position.TotalSeconds}"
             />
         <Grid ColumnDefinitions="*,*,*"
-              Margin="0,0,0,15">
+              Margin="0,0,0,15"
+              Grid.Row="3">
             <Label
                 Margin="20,0,0,0"
                 HorizontalOptions="Start"
@@ -70,7 +72,7 @@ PositionChanged="Player_PositionChanged"
             </Label>
         </Grid>
 
-        <HorizontalStackLayout HorizontalOptions="Center" Spacing="50">
+        <HorizontalStackLayout HorizontalOptions="Center" Spacing="50" Grid.Row="3">
             <ImageButton
             x:Name="BackBtn"
             Source="back.png"
@@ -101,7 +103,7 @@ PositionChanged="Player_PositionChanged"
 
         </HorizontalStackLayout>
 
-        <HorizontalStackLayout Grid.Row="5" Padding="0,10,0,10" Spacing="5">
+        <HorizontalStackLayout Grid.Row="4" Padding="0,10,0,10" Spacing="5" VerticalOptions="End">
             <Label Margin="20,10">
                 <Label.FormattedText>
                     <FormattedString>
@@ -114,7 +116,7 @@ PositionChanged="Player_PositionChanged"
             <Button Text="-" Clicked="OnSpeedMinusClicked" />
             <Button Text="+" Clicked="OnSpeedPlusClicked" />
         </HorizontalStackLayout>
-    </VerticalStackLayout>
+    </Grid>
     
     
 </ContentPage>
