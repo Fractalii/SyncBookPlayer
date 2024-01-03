@@ -23,8 +23,8 @@ namespace SyncBookPlayer
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
-            builder.Services.AddTransient<PlayerViewModel>();
-            builder.Services.AddTransient<BookPlayer>();
+            //builder.Services.AddTransient<PlayerViewModel>();
+            //builder.Services.AddTransient<BookPlayer>();
             return builder.Build();
         }
     }

@@ -13,13 +13,15 @@ using System.IO;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace SyncBookPlayer
 {
     public partial class MainPage : ContentPage
     {
         List<Book> library = new List<Book>();
-
+        Book AudioBook;
+        double Speed { get { return AudioBook.Speed; } set { AudioBook.Speed = value; Player.Speed = value; } }
         public MainPage()
         {
             InitializeComponent();
@@ -98,7 +100,7 @@ namespace SyncBookPlayer
             }*/
 
             //await conn.CloseAsync();
-            
+
 
 
             List<string> bookFolders = Directory.GetDirectories(fld, "*", SearchOption.AllDirectories).ToList();
@@ -250,7 +252,7 @@ namespace SyncBookPlayer
             await SecureStorage.Default.SetAsync("FolderPath", result.Folder.Path);
             GetBooks(result.Folder.Path);
 
-           
+
             ChooseFolderbtn.IsVisible = false;
             //gs.Source = ImageSource.FromFile(library[0].Cover);
         }
@@ -261,24 +263,219 @@ namespace SyncBookPlayer
             var files = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToArray();
             if (files.Length > 0)
                 return true;
-            
+
             return false;
         }
 
         private async void libraryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((CollectionView)sender).SelectedItem != null) { 
-            
-                await Shell.Current.GoToAsync(nameof(BookPlayer), true,
+            if (((CollectionView)sender).SelectedItem != null)
+            {
+
+                /*await Shell.Current.GoToAsync(nameof(BookPlayer), true,
                 new Dictionary<string, object>
                 {
                     {"AudioBook",((CollectionView)sender).SelectedItem},
                     {"Cover",((Book)((CollectionView)sender).SelectedItem).Cover}
-                });
+                });*/
+                if ((Book)((CollectionView)sender).SelectedItem != AudioBook)
+                {
+                    AudioBook = (Book)((CollectionView)sender).SelectedItem;
+                    //await PlayerMenu.TranslateTo(0, Window.Height, 0);
+                    StartBook();
+                }
+                
+                PlayerMenu.TranslationY = Window.Height;
+                PlayerMenu.IsVisible = true;
+                await PlayerMenu.TranslateTo(0, 0, 200);
+
                 ((CollectionView)sender).SelectedItem = null;
-            }   
+            }
         }
 
 
+        //player
+
+        public void StartBook()
+        {
+            BookCover.Source = AudioBook.Cover;
+            Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
+            Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
+            playlistPicker.ItemsSource = AudioBook.Playlist;
+            playlistPicker.SelectedIndex = AudioBook.MarkIndex;
+            AudioBook.State = Book._State.Started;
+        }
+        /*protected override void OnDisappearing()
+        {
+            //Player.Pause();
+            if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
+                AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
+            else
+                AudioBook.MarkTime = 0;
+            //Player.Stop();
+            //Player.Source = null;
+            AudioBook.Save();
+            //base.OnDisappearing();
+        }*/
+        void Closing()
+        {
+            if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
+                AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
+            else
+                AudioBook.MarkTime = 0;
+            AudioBook.Save();
+        }
+
+
+        public void ExitSave()
+        {
+            if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
+                AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
+            AudioBook.Save();
+        }
+
+        public void Player_MediaEnded(object? sender, EventArgs e)
+        {
+            if (AudioBook.Playlist.Count > AudioBook.MarkIndex + 1)
+            {
+                AudioBook.MarkIndex++;
+                AudioBook.MarkTime = 0;
+                AudioBook.ListenedSec += Player.Duration.TotalSeconds;
+                AudioBook.Save();
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
+                    //PositionSlider.Maximum = Player.Duration.TotalSeconds;
+                    playlistPicker.SelectedIndex = AudioBook.MarkIndex;
+                    Player.Play();
+                });
+            }
+            else
+            {
+                AudioBook.State = Book._State.Finished;
+            }
+
+
+            //secret.Text = AudioBook.Playlist[AudioBook.MarkIndex];
+        }
+
+        void OnSpeedMinusClicked(object? sender, EventArgs e)
+        {
+            if (Player.Speed >= 0.5)
+            {
+                Speed -= 0.25;
+            }
+        }
+
+        void OnSpeedPlusClicked(object? sender, EventArgs e)
+        {
+            if (Player.Speed < 10)
+            {
+                Speed += 0.25;
+            }
+        }
+
+        async void Slider_DragCompleted(object? sender, EventArgs e)
+        {
+            ArgumentNullException.ThrowIfNull(sender);
+
+            var newValue = ((Slider)sender).Value;
+            Player.SeekTo(TimeSpan.FromSeconds(newValue));
+
+            Player.Play();
+            PlayBtn.Source = "pause.png";
+            //var x = PositionSlider.Value;
+        }
+
+        void Slider_DragStarted(object sender, EventArgs e)
+        {
+            Player.Pause();
+        }
+        //windows приколы
+        private void Player_MediaOpened(object sender, EventArgs e)
+        {
+            //Player.Pause();
+            Player.Speed = Speed;
+            Player.Play();
+            PlayBtn.Source = "pause.png";
+            //Player.Position = TimeSpan.FromSeconds(AudioBook.MarkTime)
+            //PositionSlider.Value = Player.Position.TotalSeconds;
+            //PositionSlider.Maximum = Player.Duration.TotalSeconds;
+            //int x = 4;
+        }
+
+        private void playlistPicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (AudioBook.MarkIndex != playlistPicker.SelectedIndex && PlayerMenu.IsVisible)
+            {
+                AudioBook.MarkIndex = playlistPicker.SelectedIndex;
+                Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
+            }
+        }
+
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+            //var hg = PositionSlider.Value;
+            if (Player.CurrentState == MediaElementState.Playing)
+            {
+                Player.Pause();
+                if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
+                    AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
+                else
+                    AudioBook.MarkTime = 0;
+                AudioBook.Save();
+                PlayBtn.Source = "play.png";
+            }
+            else
+            {
+                Player.Play();
+                PlayBtn.Source = "pause.png";
+            }
+
+            //isPaused = !isPaused;
+            //var x = Player.CurrentState;
+
+            // Change the text of the button to the corresponding symbol
+            //PlayBtn.Text = isPaused ? "⏸️" : "▶️";
+
+            // Animate the button to shrink and then return to normal size
+            PlayBtn.ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => PlayBtn.ScaleTo(1, 70, Easing.SinOut));
+        }
+
+        private void ForwardBtn_Clicked(object sender, EventArgs e)
+        {
+            ForwardBtn.RotateTo(15, 100, Easing.Linear).ContinueWith((t) => ForwardBtn.RotateTo(0, 70, Easing.Linear));
+            Player.SeekTo(Player.Position + TimeSpan.FromSeconds(30));
+        }
+
+        private void BackBtn_Clicked(object sender, EventArgs e)
+        {
+            BackBtn.RotateTo(-15, 100, Easing.Linear).ContinueWith((t) => BackBtn.RotateTo(0, 70, Easing.Linear));
+            Player.SeekTo(Player.Position - TimeSpan.FromSeconds(15));
+        }
+
+        private void Player_PositionChanged(object sender, MediaPositionChangedEventArgs e)
+        {
+            //beforeSec.Text = "-" + (string)countdown.Convert((AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds))/Player.Speed, null, null, null);
+            //BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds)) / Player.Speed;
+        }
+
+        private async void Button_Clicked_1(object sender, EventArgs e)
+        {
+            Closing();
+            await PlayerMenu.TranslateTo(0, Window.Height, 200);
+            PlayerMenu.IsVisible = false;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (PlayerMenu.IsVisible)
+            {
+                Button_Clicked_1(null, null);
+                return true;
+            }
+            else
+                return base.OnBackButtonPressed();
+        }
     }
 }

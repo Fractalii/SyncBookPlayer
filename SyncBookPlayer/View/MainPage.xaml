@@ -3,86 +3,201 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="SyncBookPlayer.MainPage"
-             Title="Библиотека">
+             xmlns:converters="clr-namespace:SyncBookPlayer.Extra"
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Spacing="20">
+    <ContentPage.Resources>
+        <toolkit:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />
+        <converters:SecondsToStringConverter x:Key="SecondsToStringConverter" />
+    </ContentPage.Resources>
 
-            <Button
-                Text="Выберите папку"
-                x:Name="ChooseFolderbtn"
-                Clicked="PickFolder"
-                IsVisible="false"></Button>
+    <Grid>
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout
+                Spacing="20">
 
-            <Label Text="Слушаете сейчас" HorizontalOptions="Center" FontSize="Medium"/>
+                <Button
+                    Text="Выберите папку"
+                    x:Name="ChooseFolderbtn"
+                    Clicked="PickFolder"
+                    IsVisible="false"></Button>
 
-            <CollectionView x:Name="StartedView"
-                ItemsLayout="HorizontalList"
-                SelectionMode="Single"
-                HorizontalScrollBarVisibility="Never"
-                SelectionChanged="libraryList_SelectionChanged">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <VerticalStackLayout WidthRequest="140" Margin="10,0,0,0" >
-                            <Image Source="{Binding Cover}" HeightRequest="140" WidthRequest="140"/>
-                            <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
-                        </VerticalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <Label Text="Слушаете сейчас" HorizontalOptions="Center" FontSize="Medium"/>
 
-            <Label Text="Не начато" HorizontalOptions="Center" FontSize="Medium"/>
-
-            <CollectionView x:Name="NotStartedView"
-                            ItemsLayout="HorizontalList"
-                            SelectionMode="Single"
-                            HorizontalScrollBarVisibility="Never"
-                            SelectionChanged="libraryList_SelectionChanged">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
-                            <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
-                            <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
-                        </VerticalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <Label Text="Прослушано" HorizontalOptions="Center" FontSize="Medium"/>
-
-            <CollectionView x:Name="FinishedView"
-                ItemsLayout="HorizontalList"
-                SelectionMode="Single"
-                HorizontalScrollBarVisibility="Never"
-                SelectionChanged="libraryList_SelectionChanged">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
-                            <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
-                            <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
-                        </VerticalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <!--<CollectionView x:Name="libraryList"
-                            SelectionMode="Single"
-                            SelectionChanged="libraryList_SelectionChanged">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <HorizontalStackLayout Padding="10">
-                            <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"></Image>
-                            <VerticalStackLayout>
-                                <Label Text="{Binding Title}"></Label>
-
+                <CollectionView x:Name="StartedView"
+                    ItemsLayout="HorizontalList"
+                    SelectionMode="Single"
+                    HorizontalScrollBarVisibility="Never"
+                    SelectionChanged="libraryList_SelectionChanged">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout WidthRequest="140" Margin="10,0,0,0" >
+                                <Image Source="{Binding Cover}" HeightRequest="140" WidthRequest="140"/>
+                                <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
-                        </HorizontalStackLayout>
-                    </DataTemplate>
-                    
-                </CollectionView.ItemTemplate>
-            </CollectionView>-->
-        </VerticalStackLayout>
-    </ScrollView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
+                <Label Text="Не начато" HorizontalOptions="Center" FontSize="Medium"/>
+
+                <CollectionView x:Name="NotStartedView"
+                                ItemsLayout="HorizontalList"
+                                SelectionMode="Single"
+                                HorizontalScrollBarVisibility="Never"
+                                SelectionChanged="libraryList_SelectionChanged">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
+                                <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
+                                <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label Text="Прослушано" HorizontalOptions="Center" FontSize="Medium"/>
+
+                <CollectionView x:Name="FinishedView"
+                    ItemsLayout="HorizontalList"
+                    SelectionMode="Single"
+                    HorizontalScrollBarVisibility="Never"
+                    SelectionChanged="libraryList_SelectionChanged">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
+                                <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
+                                <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!--<CollectionView x:Name="libraryList"
+                                SelectionMode="Single"
+                                SelectionChanged="libraryList_SelectionChanged">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <HorizontalStackLayout Padding="10">
+                                <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"></Image>
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding Title}"></Label>
+
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    
+                    </CollectionView.ItemTemplate>
+                </CollectionView>-->
+            </VerticalStackLayout>
+        </ScrollView>
+
+
+        <Grid x:Name="PlayerMenu" RowDefinitions="Auto, 2*,Auto,Auto,*,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="#1f1f1f">
+            <Button Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1"/>
+            <Frame
+            Grid.Row="1"
+            MaximumHeightRequest="300"
+            MaximumWidthRequest="{Binding Source={RelativeSource Self}, Path=Height}"
+            Padding="0"
+            BorderColor="Transparent"
+            BackgroundColor="Transparent"
+            CornerRadius="14">
+                <Image 
+            x:Name="BookCover"/>
+            </Frame>
+            <Picker x:Name="playlistPicker"
+                Grid.Row="2"
+                SelectedIndexChanged="playlistPicker_SelectedIndexChanged">
+            </Picker>
+
+
+            <toolkit:MediaElement 
+  x:Name="Player"
+  ShouldShowPlaybackControls="True" 
+  MediaEnded="Player_MediaEnded"
+PositionChanged="Player_PositionChanged"
+            IsVisible="false"
+            MediaOpened="Player_MediaOpened"/>
+            <Slider
+            VerticalOptions="End"
+            Margin="15,0,15,0"
+    x:Name="PositionSlider"
+    Grid.Row="3"
+    MinimumTrackColor="Gray"
+    DragStarted="Slider_DragStarted"
+    DragCompleted="Slider_DragCompleted"
+    Maximum="{Binding Source={x:Reference Player}, Path=Duration.TotalSeconds}"
+    Value="{Binding Source={x:Reference Player}, Path=Position.TotalSeconds}"
+            />
+            <Grid ColumnDefinitions="*,*,*"
+              Margin="0,0,0,15"
+              Grid.Row="4">
+                <Label
+                Margin="20,0,0,0"
+                HorizontalOptions="Start"
+                Text="{Binding Source={x:Reference PositionSlider}, Path=Value, Converter={StaticResource SecondsToStringConverter}}">
+                </Label>
+                <Label
+                x:Name="beforeSec"
+    Grid.Column="1"
+    HorizontalOptions="Center"
+    Text="{Binding ToListen, Converter={StaticResource SecondsToStringConverter}, StringFormat='-{0}'}">
+                </Label>
+                <Label
+                Margin="0,0,20,0"
+                Grid.Column="2"
+                HorizontalOptions="End"
+                Text="{Binding Source={x:Reference Player}, Path=Duration, Converter={StaticResource SecondsToStringConverter}}">
+                </Label>
+            </Grid>
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="50" Grid.Row="4">
+                <ImageButton
+            x:Name="BackBtn"
+            Source="back.png"
+            BackgroundColor = "Transparent"
+            WidthRequest = "35"
+            HeightRequest = "30"
+            Clicked="BackBtn_Clicked"
+    ></ImageButton>
+
+                <ImageButton 
+            BackgroundColor="Transparent"
+            x:Name="PlayBtn"
+            Source="pause.png"
+                WidthRequest = "80"
+                HeightRequest = "80"
+            Clicked="Button_Clicked"></ImageButton>
+
+
+                <ImageButton
+            x:Name="ForwardBtn"
+            Source="forward.png"
+            BackgroundColor = "Transparent"
+                WidthRequest = "35"
+                HeightRequest = "30"
+            Clicked="ForwardBtn_Clicked"
+            ></ImageButton>
+
+
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="5" Padding="0,10,0,10" Spacing="5" VerticalOptions="End">
+                <Label Margin="20,10">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Speed:" />
+                            <Span Text="{Binding Source={x:Reference Player}, Path=Speed}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Button Text="-" Clicked="OnSpeedMinusClicked" />
+                <Button Text="+" Clicked="OnSpeedPlusClicked" />
+            </HorizontalStackLayout>
+        </Grid>
+
+
+    </Grid>
 </ContentPage>

@@ -9,7 +9,7 @@ namespace SyncBookPlayer
             InitializeComponent();
 
             //Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
-            Routing.RegisterRoute(nameof(BookPlayer), typeof(BookPlayer));
+            //Routing.RegisterRoute(nameof(BookPlayer), typeof(BookPlayer));
         }
     }
 }
