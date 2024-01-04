@@ -2,26 +2,18 @@
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Graphics.Platform;
 using Npgsql;
 using SyncBookPlayer.Model;
-using SyncBookPlayer.View;
-using System.Drawing;
-using System.Formats.Tar;
-using System.IO;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace SyncBookPlayer
 {
     public partial class MainPage : ContentPage
     {
         List<Book> library = new List<Book>();
-        Book AudioBook;
+        public Book AudioBook;
         double Speed { get { return AudioBook.Speed; } set { AudioBook.Speed = value; Player.Speed = value; } }
+        public bool isPlaying { get { if(Player.CurrentState == MediaElementState.Playing) return true; return false; } }
         public MainPage()
         {
             InitializeComponent();
@@ -32,7 +24,9 @@ namespace SyncBookPlayer
             //Shell.Current = this;
             //Shell.Current.Navigation
             //var c = Shell.Current;
-
+#if ANDROID
+            PositionSlider.Margin = new Thickness(5,0,5,0);
+#endif
 
             GetFOlder();
         }
@@ -287,7 +281,10 @@ namespace SyncBookPlayer
                 
                 PlayerMenu.TranslationY = Window.Height;
                 PlayerMenu.IsVisible = true;
-                await PlayerMenu.TranslateTo(0, 0, 200);
+                await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
+#if ANDROID
+                Menu.IsVisible = false;
+#endif
 
                 ((CollectionView)sender).SelectedItem = null;
             }
@@ -298,39 +295,40 @@ namespace SyncBookPlayer
 
         public void StartBook()
         {
+            //PlayerMenu.BackgroundColor = GetCoverColor();
+            /*SixLabors.ImageSharp.PixelFormats.Rgba32 color;
+            using (var image = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(AudioBook.Cover))
+            {
+                color = image[1, 1];
+            }
+            //PlayerMenu.BackgroundColor = Color.FromRgb(color.R - 50, color.G - 50, color.B - 50);
+            LinearGradientBrush nn = new LinearGradientBrush();
+            nn.StartPoint = new Point(0, 0);
+            nn.EndPoint = new Point(0, 1);
+            nn.GradientStops.Add(new GradientStop(Color.FromRgb(color.R, color.G, color.B), (float)-1));
+            nn.GradientStops.Add(new GradientStop(Color.FromArgb("2a2a2a"), (float)1.5));
+            PlayerMenu.Background = nn;*/
             BookCover.Source = AudioBook.Cover;
+#if WINDOWS
+            Player.Source = null;
+#endif
             Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
             Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
             playlistPicker.ItemsSource = AudioBook.Playlist;
             playlistPicker.SelectedIndex = AudioBook.MarkIndex;
             AudioBook.State = Book._State.Started;
         }
-        /*protected override void OnDisappearing()
+        protected override void OnDisappearing()
         {
-            //Player.Pause();
-            if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
-                AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
-            else
-                AudioBook.MarkTime = 0;
-            //Player.Stop();
-            //Player.Source = null;
-            AudioBook.Save();
-            //base.OnDisappearing();
-        }*/
-        void Closing()
-        {
-            if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
-                AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
-            else
-                AudioBook.MarkTime = 0;
-            AudioBook.Save();
+            if (AudioBook != null)
+                Closing();
         }
-
-
-        public void ExitSave()
+        public void Closing()
         {
             if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
                 AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
+            else
+                AudioBook.MarkTime = 0;
             AudioBook.Save();
         }
 
@@ -463,7 +461,10 @@ namespace SyncBookPlayer
         private async void Button_Clicked_1(object sender, EventArgs e)
         {
             Closing();
-            await PlayerMenu.TranslateTo(0, Window.Height, 200);
+#if ANDROID
+            Menu.IsVisible = true;
+#endif
+            await PlayerMenu.TranslateTo(0, Window.Height, 200, Easing.CubicInOut);
             PlayerMenu.IsVisible = false;
         }
 
@@ -477,5 +478,21 @@ namespace SyncBookPlayer
             else
                 return base.OnBackButtonPressed();
         }
+
+        /*private Color GetCoverColor()
+        {
+            Stream imageStream = null;
+            if (AudioBook.Cover is not null)
+                imageStream = File.OpenRead(AudioBook.Cover);
+            byte[] imageData = null;
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                imageStream.CopyTo(memoryStream);
+                imageData = memoryStream.ToArray();
+            }
+            return Color.FromRgb(imageData[2], imageData[1], imageData[0]);
+
+
+        }*/
     }
 }

@@ -12,7 +12,7 @@
     </ContentPage.Resources>
 
     <Grid>
-        <ScrollView Grid.Row="0">
+        <ScrollView Grid.Row="0" x:Name="Menu">
             <VerticalStackLayout
                 Spacing="20">
 
@@ -94,7 +94,7 @@
 
 
         <Grid x:Name="PlayerMenu" RowDefinitions="Auto, 2*,Auto,Auto,*,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="#1f1f1f">
-            <Button Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1"/>
+            <Button Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Text="↓" FontSize="30" Padding="0"/>
             <Frame
             Grid.Row="1"
             MaximumHeightRequest="300"
@@ -121,7 +121,7 @@ PositionChanged="Player_PositionChanged"
             MediaOpened="Player_MediaOpened"/>
             <Slider
             VerticalOptions="End"
-            Margin="15,0,15,0"
+            Margin="20,0,20,0"
     x:Name="PositionSlider"
     Grid.Row="3"
     MinimumTrackColor="Gray"

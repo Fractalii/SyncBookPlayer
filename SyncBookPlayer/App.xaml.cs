@@ -19,10 +19,18 @@ namespace SyncBookPlayer
         protected override Window CreateWindow(IActivationState activationState)
         {
             Window window = base.CreateWindow(activationState);
+            var timer = window.Dispatcher.CreateTimer();
 #if WINDOWS
             window.Height = 700;
             window.Width = 600;
 #endif
+            window.Resumed += (s, e) =>
+            {
+#if ANDROID
+                timer.Stop();
+#endif
+            };
+
             /*window.Deactivated += (s, e) =>
             {
 
@@ -46,10 +54,18 @@ namespace SyncBookPlayer
             window.Stopped += (s, e) =>
             {
 #if ANDROID
-                var currentPage = Shell.Current.CurrentPage as BookPlayer;
+                var currentPage = Shell.Current.CurrentPage as MainPage;
                 if (currentPage != null)
                 {
-                    currentPage.ExitSave();
+                    if (currentPage.isPlaying)
+                    {
+                        currentPage.Closing();
+                        
+                        timer.Interval = TimeSpan.FromSeconds(15);
+                        timer.Tick += (s, e) => Saving();
+                        timer.Start();
+                    }
+                        
                 }
 #endif
                 //MainPage.Sunc()
@@ -59,6 +75,18 @@ namespace SyncBookPlayer
             };
 
             return window;
+        }
+
+        void Saving()
+        {
+            var currentPage = Shell.Current.CurrentPage as MainPage;
+            if (currentPage != null)
+            {
+                if (currentPage.isPlaying)
+                {
+                    currentPage.Closing();
+                }
+            }
         }
 
     }
