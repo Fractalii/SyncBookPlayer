@@ -93,7 +93,7 @@
         </ScrollView>
 
 
-        <Grid x:Name="PlayerMenu" RowDefinitions="Auto, 2*,Auto,Auto,*,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="#1f1f1f">
+        <Grid x:Name="PlayerMenu" RowDefinitions="Auto, 2*,Auto,Auto,*,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
             <Button Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Text="↓" FontSize="30" Padding="0"/>
             <Frame
             Grid.Row="1"
