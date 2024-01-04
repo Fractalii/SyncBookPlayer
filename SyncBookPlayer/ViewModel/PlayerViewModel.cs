@@ -8,7 +8,7 @@ namespace SyncBookPlayer.ViewModel
     {
         [ObservableProperty]
         double toListen;
-        [ObservableProperty]
-        string cover;
+        //[ObservableProperty]
+        //string cover;
     }
 }

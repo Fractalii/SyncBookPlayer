@@ -1,9 +1,16 @@
-﻿using CommunityToolkit.Maui.Alerts;
+﻿/*#if ANDROID
+using Android.App;
+using Android.Content;
+using Android.Media.Session;
+#endif*/
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
+using Microsoft.Maui.Controls;
 using Npgsql;
 using SyncBookPlayer.Model;
+using SyncBookPlayer.ViewModel;
 using System.Text.Json;
 
 namespace SyncBookPlayer
@@ -14,6 +21,11 @@ namespace SyncBookPlayer
         public Book AudioBook;
         double Speed { get { return AudioBook.Speed; } set { AudioBook.Speed = value; Player.Speed = value; } }
         public bool isPlaying { get { if(Player.CurrentState == MediaElementState.Playing) return true; return false; } }
+        PlayerViewModel BindingManager;
+/*#if ANDROID
+        NotificationManager notificationManager;
+        MediaSession mediaSession;
+#endif*/
         public MainPage()
         {
             InitializeComponent();
@@ -24,10 +36,27 @@ namespace SyncBookPlayer
             //Shell.Current = this;
             //Shell.Current.Navigation
             //var c = Shell.Current;
+            BindingManager = new PlayerViewModel();
+            BindingContext = BindingManager;
 #if ANDROID
             PositionSlider.Margin = new Thickness(5,0,5,0);
-#endif
 
+            /*notificationManager = (NotificationManager)Android.App.Application.Context.GetSystemService(Context.NotificationService);
+            var notificationChannel = new NotificationChannel("media_player_channel", "Media Player Channel", NotificationImportance.Low);
+            notificationManager.CreateNotificationChannel(notificationChannel);
+
+            mediaSession = new MediaSession(Android.App.Application.Context, "MediaSessionTag");
+            var mediaSessionCallback = new MediaSessionCallback();
+            mediaSession.SetCallback(mediaSessionCallback);
+
+            var pendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, 0, new Intent(Android.App.Application.Context, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
+            //var mediaStyle = new Android.Support.V7.App.NotificationCompat.MediaStyle();
+            //mediaStyle.SetMediaSession(mediaSession.SessionToken);
+            mediaSession.SetSessionActivity(pendingIntent);
+
+            var mediaStyle = new Android.Support.V4.Media.App.NotificationCompat.MediaStyle();
+            mediaStyle.SetMediaSession(mediaSession.SessionToken);*/
+#endif
             GetFOlder();
         }
 
@@ -189,15 +218,7 @@ namespace SyncBookPlayer
                         book.Title = Path.GetFileName(folder);
                     book.Author = bookFile.Tag.FirstPerformer;
                     book.Narrator = bookFile.Tag.FirstAlbumArtist;
-                    int j = 0;
-                    foreach (var item in book.Playlist)
-                    {
-                        var bf = TagLib.File.Create(item);
-                        book.DurationSec += bf.Properties.Duration.TotalSeconds;
-                        if (j < book.MarkIndex)
-                            book.ListenedSec += bf.Properties.Duration.TotalSeconds;
-                        j++;
-                    }
+                    
                     if (book.Cover is null)
                     {
                         //var mStream = new MemoryStream();
@@ -275,8 +296,30 @@ namespace SyncBookPlayer
                 if ((Book)((CollectionView)sender).SelectedItem != AudioBook)
                 {
                     AudioBook = (Book)((CollectionView)sender).SelectedItem;
-                    //await PlayerMenu.TranslateTo(0, Window.Height, 0);
+                    //var watch = System.Diagnostics.Stopwatch.StartNew();
+                    AudioBook.ListenedSec = 0;
+                    AudioBook.DurationSec = 0;
+
+                    Task.Run(() =>
+                    {
+                        int j = 0;
+                        foreach (var item in AudioBook.Playlist)
+                        {
+                            var bf = TagLib.File.Create(item);
+                            AudioBook.DurationSec += bf.Properties.Duration.TotalSeconds;
+                            if (j < AudioBook.MarkIndex)
+                                AudioBook.ListenedSec += bf.Properties.Duration.TotalSeconds;
+                            j++;
+                        }
+                    });
+                    //var elapsedMs = watch.ElapsedMilliseconds;
+
                     StartBook();
+//#if ANDROID
+                    //notificationManager.StartNotification();
+//#endif
+
+
                 }
                 
                 PlayerMenu.TranslationY = Window.Height;
@@ -285,8 +328,8 @@ namespace SyncBookPlayer
 #if ANDROID
                 Menu.IsVisible = false;
 #endif
-
                 ((CollectionView)sender).SelectedItem = null;
+                
             }
         }
 
@@ -455,7 +498,7 @@ namespace SyncBookPlayer
         private void Player_PositionChanged(object sender, MediaPositionChangedEventArgs e)
         {
             //beforeSec.Text = "-" + (string)countdown.Convert((AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds))/Player.Speed, null, null, null);
-            //BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds)) / Player.Speed;
+            BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds)) / Player.Speed;
         }
 
         private async void Button_Clicked_1(object sender, EventArgs e)

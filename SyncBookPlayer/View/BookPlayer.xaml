@@ -23,8 +23,7 @@
             BackgroundColor="Transparent"
             CornerRadius="14">
         <Image 
-            x:Name="BookCover"
-            Source="{Binding Cover}"/>
+            x:Name="BookCover"/>
         </Frame>
         <Picker x:Name="playlistPicker"
                 Grid.Row="1"
