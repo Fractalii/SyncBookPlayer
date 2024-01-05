@@ -61,7 +61,7 @@ namespace SyncBookPlayer
                     {
                         currentPage.Closing();
                         
-                        timer.Interval = TimeSpan.FromSeconds(15);
+                        timer.Interval = TimeSpan.FromSeconds(80);
                         timer.Tick += (s, e) => Saving();
                         timer.Start();
                     }

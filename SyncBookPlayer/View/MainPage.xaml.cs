@@ -7,7 +7,6 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
-using Microsoft.Maui.Controls;
 using Npgsql;
 using SyncBookPlayer.Model;
 using SyncBookPlayer.ViewModel;

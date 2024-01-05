@@ -1,4 +1,4 @@
-﻿using Android.Media.Session;
+﻿/*using Android.Media.Session;
 using Android.OS;
 using System;
 using System.Collections.Generic;
@@ -80,4 +80,4 @@ namespace SyncBookPlayer.Model
             OnPlayFromSearchImpl(query, extras);
         }
     }
-}
+}*/
