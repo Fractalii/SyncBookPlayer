@@ -450,6 +450,20 @@ namespace SyncBookPlayer
             {
                 AudioBook.MarkIndex = playlistPicker.SelectedIndex;
                 Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
+                Task.Run(() =>
+                {
+                    AudioBook.ListenedSec = 0;
+                    int j = 0;
+                    foreach (var item in AudioBook.Playlist)
+                    {
+                        var bf = TagLib.File.Create(item);
+                        if (j < AudioBook.MarkIndex)
+                            AudioBook.ListenedSec += bf.Properties.Duration.TotalSeconds;
+                        else
+                            break;
+                        j++;
+                    }
+                });
             }
         }
 
