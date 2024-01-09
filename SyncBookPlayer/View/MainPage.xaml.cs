@@ -498,14 +498,14 @@ namespace SyncBookPlayer
 
         private void ForwardBtn_Clicked(object sender, EventArgs e)
         {
-            ForwardBtn.RotateTo(15, 100, Easing.Linear).ContinueWith((t) => ForwardBtn.RotateTo(0, 70, Easing.Linear));
             Player.SeekTo(Player.Position + TimeSpan.FromSeconds(30 * Speed));
+            ForwardBtn.RotateTo(15, 100, Easing.Linear).ContinueWith((t) => ForwardBtn.RotateTo(0, 70, Easing.Linear));
         }
 
         private void BackBtn_Clicked(object sender, EventArgs e)
         {
-            BackBtn.RotateTo(-15, 100, Easing.Linear).ContinueWith((t) => BackBtn.RotateTo(0, 70, Easing.Linear));
             Player.SeekTo(Player.Position - TimeSpan.FromSeconds(15 * Speed));
+            BackBtn.RotateTo(-15, 100, Easing.Linear).ContinueWith((t) => BackBtn.RotateTo(0, 70, Easing.Linear));
         }
 
         private void Player_PositionChanged(object sender, MediaPositionChangedEventArgs e)
