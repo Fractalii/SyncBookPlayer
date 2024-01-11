@@ -5,11 +5,15 @@ using Android.Media.Session;
 #endif*/
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
 using Npgsql;
+using SkiaSharp;
 using SyncBookPlayer.Model;
 using SyncBookPlayer.ViewModel;
+using System;
+using System.Reflection;
 using System.Text.Json;
 
 namespace SyncBookPlayer
@@ -55,6 +59,8 @@ namespace SyncBookPlayer
 
             var mediaStyle = new Android.Support.V4.Media.App.NotificationCompat.MediaStyle();
             mediaStyle.SetMediaSession(mediaSession.SessionToken);*/
+#elif WINDOWS
+            PositionSlider.MaximumTrackColor = Color.FromArgb("777978");
 #endif
             GetFOlder();
         }
@@ -350,6 +356,28 @@ namespace SyncBookPlayer
             nn.GradientStops.Add(new GradientStop(Color.FromRgb(color.R, color.G, color.B), (float)-1));
             nn.GradientStops.Add(new GradientStop(Color.FromArgb("2a2a2a"), (float)1.5));
             PlayerMenu.Background = nn;*/
+            if (AudioBook.Cover is not null) { 
+                Task.Run(() =>
+                {
+                    /*LinearGradientBrush nn = new LinearGradientBrush();
+                    nn.StartPoint = new Point(0, 0);
+                    nn.EndPoint = new Point(0, 1);
+                    //nn.GradientStops.Add(new GradientStop(Color.FromArgb(ImageColor.AverageFromPath(AudioBook.Cover)), (float)-1));
+                    nn.GradientStops.Add(new GradientStop(Color.FromArgb(GetDominantColor(AudioBook.Cover)), (float)-1));
+                    nn.GradientStops.Add(new GradientStop(Color.FromArgb("2a2a2a"), (float)1.5));
+                    PlayerMenu.Background = nn;*/
+                    var col = Blend(Color.FromArgb(GetDominantColor(AudioBook.Cover)), BackgroundColor, 0.3);
+                    /*MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        PlayerMenu.BackgroundColor = col;
+                    });*/
+                    PlayerMenu.Dispatcher.Dispatch(() =>
+                    {
+                        PlayerMenu.BackgroundColor = col;
+                    });
+                
+                });
+            }
             BookCover.Source = AudioBook.Cover;
 #if WINDOWS
             Player.Source = null;
@@ -550,5 +578,60 @@ namespace SyncBookPlayer
 
 
         }*/
+
+        public string GetDominantColor(string path)
+        {
+            SkiaSharp.SKBitmap bmp;
+            Stream stream = File.OpenRead(path);
+            bmp = SkiaSharp.SKBitmap.Decode(stream);
+            //Used for tally
+            int r = 0;
+            int g = 0;
+            int b = 0;
+
+            int total = 0;
+
+            //int x = bmp.Width / 2;
+
+            /*for (int y = 0; y < bmp.Height; y++)
+            {
+                SkiaSharp.SKColor clr = bmp.GetPixel(x, y);
+
+                r += clr.Red;
+                g += clr.Green;
+                b += clr.Blue;
+
+                total++;
+                if (total > 500)
+                    break;
+            }*/
+            for (int x = 0; x < bmp.Width; x += bmp.Width/15)
+            {
+                for (int y = 0; y < bmp.Height; y += bmp.Height/15)
+                {
+                    SKColor clr = bmp.GetPixel(x, y);
+
+                    r += clr.Red;
+                    g += clr.Green;
+                    b += clr.Blue;
+
+                    total++;
+                }
+            }
+
+            //Calculate average
+            r /= total;
+            g /= total;
+            b /= total;
+
+            return $"{r:X2}{g:X2}{b:X2}";
+        }
+        public Color Blend(Color color, Color backColor, double amount)
+        {
+            byte r = (byte)(color.GetByteRed() * amount + backColor.GetByteRed() * (1 - amount));
+            byte g = (byte)(color.GetByteGreen() * amount + backColor.GetByteGreen() * (1 - amount));
+            byte b = (byte)(color.GetByteBlue() * amount + backColor.GetByteBlue() * (1 - amount));
+            return Color.FromRgb(r, g, b);
+        }
     }
 }
