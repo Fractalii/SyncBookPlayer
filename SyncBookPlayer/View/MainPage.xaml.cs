@@ -298,6 +298,9 @@ namespace SyncBookPlayer
                     {"AudioBook",((CollectionView)sender).SelectedItem},
                     {"Cover",((Book)((CollectionView)sender).SelectedItem).Cover}
                 });*/
+                if (AudioBook is not null)
+                    Closing();
+
                 if ((Book)((CollectionView)sender).SelectedItem != AudioBook)
                 {
                     AudioBook = (Book)((CollectionView)sender).SelectedItem;
