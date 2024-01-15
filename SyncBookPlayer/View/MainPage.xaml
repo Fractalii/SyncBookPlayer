@@ -108,7 +108,7 @@
             Padding="0"
             BorderColor="Transparent"
             BackgroundColor="Transparent"
-            CornerRadius="14">
+            CornerRadius="20">
                 <Image 
             x:Name="BookCover"/>
             </Frame>
