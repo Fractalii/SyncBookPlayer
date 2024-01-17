@@ -298,8 +298,7 @@ namespace SyncBookPlayer
                     {"AudioBook",((CollectionView)sender).SelectedItem},
                     {"Cover",((Book)((CollectionView)sender).SelectedItem).Cover}
                 });*/
-                if (AudioBook is not null)
-                    Closing();
+                Closing();
 
                 if ((Book)((CollectionView)sender).SelectedItem != AudioBook)
                 {
@@ -393,16 +392,18 @@ namespace SyncBookPlayer
         }
         protected override void OnDisappearing()
         {
-            if (AudioBook != null)
-                Closing();
+            Closing();
         }
         public void Closing()
         {
-            if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
-                AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
-            else
-                AudioBook.MarkTime = 0;
-            AudioBook.Save();
+            if (isPlaying)
+            {
+                if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
+                    AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
+                else
+                    AudioBook.MarkTime = 0;
+                AudioBook.Save();
+            }
         }
 
         public void Player_MediaEnded(object? sender, EventArgs e)
