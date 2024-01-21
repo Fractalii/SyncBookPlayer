@@ -157,8 +157,8 @@ namespace SyncBookPlayer
                         int xfs = 0;
                     }
                 }*/
-
-                if (isBook(folder))
+                var files = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToList();
+                if (files.Count > 0)
                 {
                     Book bookLocal = null;
                     Book bookSync = null;
@@ -213,7 +213,7 @@ namespace SyncBookPlayer
                         book.Cover = cover[0];
 
 
-                    book.Playlist = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToList();
+                    book.Playlist = files;
                     book.Playlist.Sort();
 
                     var bookFile = TagLib.File.Create(book.Playlist[0]);
@@ -279,11 +279,9 @@ namespace SyncBookPlayer
 
         private bool isBook(string folder)
         {
-            var x = Directory.EnumerateFiles(folder);
             var files = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToArray();
             if (files.Length > 0)
                 return true;
-
             return false;
         }
 
