@@ -25,6 +25,7 @@ namespace SyncBookPlayer
         double Speed { get { return AudioBook.Speed; } set { AudioBook.Speed = value; Player.Speed = value; } }
         public bool isPlaying { get { if(Player.CurrentState == MediaElementState.Playing) return true; return false; } }
         PlayerViewModel BindingManager;
+        IDispatcherTimer timer;
 /*#if ANDROID
         NotificationManager notificationManager;
         MediaSession mediaSession;
@@ -41,6 +42,9 @@ namespace SyncBookPlayer
             //var c = Shell.Current;
             BindingManager = new PlayerViewModel();
             BindingContext = BindingManager;
+            timer = Dispatcher.CreateTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += (s, e) => newSec();
 #if ANDROID
             PositionSlider.Margin = new Thickness(5,0,5,0);
 
@@ -387,6 +391,7 @@ namespace SyncBookPlayer
             playlistPicker.ItemsSource = AudioBook.Playlist;
             playlistPicker.SelectedIndex = AudioBook.MarkIndex;
             AudioBook.State = Book._State.Started;
+            newSec();
         }
         protected override void OnDisappearing()
         {
@@ -423,6 +428,7 @@ namespace SyncBookPlayer
             else
             {
                 AudioBook.State = Book._State.Finished;
+                timer.Stop();
             }
 
 
@@ -467,6 +473,7 @@ namespace SyncBookPlayer
             //Player.Pause();
             Player.Speed = Speed;
             Player.Play();
+            timer.Start();
             PlayBtn.Source = "pause.png";
             //Player.Position = TimeSpan.FromSeconds(AudioBook.MarkTime)
             //PositionSlider.Value = Player.Position.TotalSeconds;
@@ -503,6 +510,7 @@ namespace SyncBookPlayer
             if (Player.CurrentState == MediaElementState.Playing)
             {
                 Player.Pause();
+                timer.Stop();
                 if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
                     AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
                 else
@@ -513,6 +521,7 @@ namespace SyncBookPlayer
             else
             {
                 Player.Play();
+                timer.Start();
                 PlayBtn.Source = "pause.png";
             }
 
@@ -538,11 +547,12 @@ namespace SyncBookPlayer
             BackBtn.RotateTo(-15, 100, Easing.Linear).ContinueWith((t) => BackBtn.RotateTo(0, 70, Easing.Linear));
         }
 
-        private void Player_PositionChanged(object sender, MediaPositionChangedEventArgs e)
+        /*private void Player_PositionChanged(object sender, MediaPositionChangedEventArgs e)
         {
             //beforeSec.Text = "-" + (string)countdown.Convert((AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds))/Player.Speed, null, null, null);
             BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds)) / Player.Speed;
-        }
+            BindingManager.Percent = (AudioBook.ListenedSec + Player.Position.TotalSeconds) / AudioBook.DurationSec;
+        }*/
 
         private async void Button_Clicked_1(object sender, EventArgs e)
         {
@@ -634,6 +644,11 @@ namespace SyncBookPlayer
             byte g = (byte)(color.GetByteGreen() * amount + backColor.GetByteGreen() * (1 - amount));
             byte b = (byte)(color.GetByteBlue() * amount + backColor.GetByteBlue() * (1 - amount));
             return Color.FromRgb(r, g, b);
+        }
+        public void newSec()
+        {
+            BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds)) / Player.Speed;
+            BindingManager.Percent = (int)(((AudioBook.ListenedSec + Player.Position.TotalSeconds) / AudioBook.DurationSec) * 100);
         }
     }
 }

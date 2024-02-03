@@ -99,10 +99,11 @@
         </ScrollView>
 
 
-        <Grid x:Name="PlayerMenu" RowDefinitions="Auto, 2*,Auto,Auto,*,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+        <Grid x:Name="PlayerMenu" RowDefinitions="Auto, Auto, 2*,Auto,Auto,*,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
             <Button Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Text="↓" FontSize="30" Padding="0"/>
+            <Label Text="{Binding Percent, StringFormat='{0}%'}" Grid.Row="1" HorizontalOptions="Center"></Label>
             <Frame
-            Grid.Row="1"
+            Grid.Row="2"
             MaximumHeightRequest="300"
             MaximumWidthRequest="{Binding Source={RelativeSource Self}, Path=Height}"
             Padding="0"
@@ -113,23 +114,22 @@
             x:Name="BookCover"/>
             </Frame>
             <Picker x:Name="playlistPicker"
-                Grid.Row="2"
+                Grid.Row="3"
                 SelectedIndexChanged="playlistPicker_SelectedIndexChanged">
             </Picker>
 
 
             <toolkit:MediaElement 
   x:Name="Player"
-  ShouldShowPlaybackControls="True" 
+  ShouldShowPlaybackControls="False" 
   MediaEnded="Player_MediaEnded"
-PositionChanged="Player_PositionChanged"
             IsVisible="false"
             MediaOpened="Player_MediaOpened"/>
             <Slider
             VerticalOptions="End"
             Margin="20,0,20,0"
     x:Name="PositionSlider"
-    Grid.Row="3"
+    Grid.Row="4"
     MaximumTrackColor="LightGray"
     DragStarted="Slider_DragStarted"
     DragCompleted="Slider_DragCompleted"
@@ -138,7 +138,7 @@ PositionChanged="Player_PositionChanged"
             />
             <Grid ColumnDefinitions="*,*,*"
               Margin="0,0,0,15"
-              Grid.Row="4">
+              Grid.Row="5">
                 <Label
                 Margin="20,0,0,0"
                 HorizontalOptions="Start"
@@ -158,7 +158,7 @@ PositionChanged="Player_PositionChanged"
                 </Label>
             </Grid>
 
-            <HorizontalStackLayout HorizontalOptions="Center" Spacing="50" Grid.Row="4">
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="50" Grid.Row="5">
                 <ImageButton
             x:Name="BackBtn"
             Source="back.png"
@@ -189,7 +189,7 @@ PositionChanged="Player_PositionChanged"
 
             </HorizontalStackLayout>
 
-            <HorizontalStackLayout Grid.Row="5" Padding="0,10,0,10" Spacing="5" VerticalOptions="End">
+            <HorizontalStackLayout Grid.Row="6" Padding="0,10,0,10" Spacing="5" VerticalOptions="End">
                 <Label Margin="20,10">
                     <Label.FormattedText>
                         <FormattedString>
