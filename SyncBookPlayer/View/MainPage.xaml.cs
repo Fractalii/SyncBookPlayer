@@ -429,6 +429,7 @@ namespace SyncBookPlayer
             {
                 AudioBook.State = Book._State.Finished;
                 timer.Stop();
+                AudioBook.Save();
             }
 
 
