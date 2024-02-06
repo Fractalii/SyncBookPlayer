@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncBookPlayer", "SyncBookPlayer\SyncBookPlayer.csproj", "{12EEEF73-9AF6-4E1A-8DDD-8D35C7836A9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyncBookPlayer", "SyncBookPlayer\SyncBookPlayer.csproj", "{12EEEF73-9AF6-4E1A-8DDD-8D35C7836A9C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiAudio", "MauiAudio\MauiAudio.csproj", "{AED98845-965D-4319-B6A6-F27BC89DBA19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{12EEEF73-9AF6-4E1A-8DDD-8D35C7836A9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12EEEF73-9AF6-4E1A-8DDD-8D35C7836A9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{12EEEF73-9AF6-4E1A-8DDD-8D35C7836A9C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{AED98845-965D-4319-B6A6-F27BC89DBA19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AED98845-965D-4319-B6A6-F27BC89DBA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AED98845-965D-4319-B6A6-F27BC89DBA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AED98845-965D-4319-B6A6-F27BC89DBA19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

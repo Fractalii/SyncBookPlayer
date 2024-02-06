@@ -8,6 +8,7 @@ using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
+using MauiAudio;
 using Npgsql;
 using SkiaSharp;
 using SyncBookPlayer.Model;
@@ -20,10 +21,11 @@ namespace SyncBookPlayer
 {
     public partial class MainPage : ContentPage
     {
+        INativeAudioService Player2;
         List<Book> library = new List<Book>();
         public Book AudioBook;
-        double Speed { get { return AudioBook.Speed; } set { AudioBook.Speed = value; Player.Speed = value; } }
-        public bool isPlaying { get { if(Player.CurrentState == MediaElementState.Playing) return true; return false; } }
+        double Speed { get { return AudioBook.Speed; } set { AudioBook.Speed = value; Player2.Speed = value; } }
+        public bool isPlaying { get { return Player2.IsPlaying; } }
         PlayerViewModel BindingManager;
         IDispatcherTimer timer;
 /*#if ANDROID
@@ -43,8 +45,10 @@ namespace SyncBookPlayer
             BindingManager = new PlayerViewModel();
             BindingContext = BindingManager;
             timer = Dispatcher.CreateTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Interval = TimeSpan.FromSeconds(0.5);
             timer.Tick += (s, e) => newSec();
+            Player2 = NativeAudioService.Current;
+            Player2.PlayEnded += Player_MediaEnded;
 #if ANDROID
             PositionSlider.Margin = new Thickness(5,0,5,0);
 
@@ -345,36 +349,12 @@ namespace SyncBookPlayer
 
         //player
 
-        public void StartBook()
+        public async void StartBook()
         {
-            //PlayerMenu.BackgroundColor = GetCoverColor();
-            /*SixLabors.ImageSharp.PixelFormats.Rgba32 color;
-            using (var image = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(AudioBook.Cover))
-            {
-                color = image[1, 1];
-            }
-            //PlayerMenu.BackgroundColor = Color.FromRgb(color.R - 50, color.G - 50, color.B - 50);
-            LinearGradientBrush nn = new LinearGradientBrush();
-            nn.StartPoint = new Point(0, 0);
-            nn.EndPoint = new Point(0, 1);
-            nn.GradientStops.Add(new GradientStop(Color.FromRgb(color.R, color.G, color.B), (float)-1));
-            nn.GradientStops.Add(new GradientStop(Color.FromArgb("2a2a2a"), (float)1.5));
-            PlayerMenu.Background = nn;*/
             if (AudioBook.Cover is not null) { 
                 Task.Run(() =>
                 {
-                    /*LinearGradientBrush nn = new LinearGradientBrush();
-                    nn.StartPoint = new Point(0, 0);
-                    nn.EndPoint = new Point(0, 1);
-                    //nn.GradientStops.Add(new GradientStop(Color.FromArgb(ImageColor.AverageFromPath(AudioBook.Cover)), (float)-1));
-                    nn.GradientStops.Add(new GradientStop(Color.FromArgb(GetDominantColor(AudioBook.Cover)), (float)-1));
-                    nn.GradientStops.Add(new GradientStop(Color.FromArgb("2a2a2a"), (float)1.5));
-                    PlayerMenu.Background = nn;*/
                     var col = Blend(Color.FromArgb(GetDominantColor(AudioBook.Cover)), BackgroundColor, 0.3);
-                    /*MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        PlayerMenu.BackgroundColor = col;
-                    });*/
                     PlayerMenu.Dispatcher.Dispatch(() =>
                     {
                         PlayerMenu.BackgroundColor = col;
@@ -383,11 +363,14 @@ namespace SyncBookPlayer
                 });
             }
             BookCover.Source = AudioBook.Cover;
-#if WINDOWS
-            Player.Source = null;
-#endif
-            Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
-            Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
+            await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
+            Player2.PlayAsync();
+            //Player2.SeekTo(AudioBook.MarkTime);
+            timer.Start();
+            //Player2.Speed = Speed;
+            spt.Text = Speed.ToString();
+            //Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
+            //Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
             playlistPicker.ItemsSource = AudioBook.Playlist;
             playlistPicker.SelectedIndex = AudioBook.MarkIndex;
             AudioBook.State = Book._State.Started;
@@ -401,8 +384,8 @@ namespace SyncBookPlayer
         {
             if (isPlaying)
             {
-                if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
-                    AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
+                if (Convert.ToInt32(Player2.CurrentPosition) > 2)
+                    AudioBook.MarkTime = Convert.ToInt32(Player2.CurrentPosition) - 2;
                 else
                     AudioBook.MarkTime = 0;
                 AudioBook.Save();
@@ -415,14 +398,15 @@ namespace SyncBookPlayer
             {
                 AudioBook.MarkIndex++;
                 AudioBook.MarkTime = 0;
-                AudioBook.ListenedSec += Player.Duration.TotalSeconds;
+                AudioBook.ListenedSec += Player2.Duration;
                 AudioBook.Save();
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
+                    Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
                     //PositionSlider.Maximum = Player.Duration.TotalSeconds;
                     playlistPicker.SelectedIndex = AudioBook.MarkIndex;
-                    Player.Play();
+                    Player2.PlayAsync();
+                    Player2.Speed = Speed;
                 });
             }
             else
@@ -438,17 +422,19 @@ namespace SyncBookPlayer
 
         void OnSpeedMinusClicked(object? sender, EventArgs e)
         {
-            if (Player.Speed >= 0.5)
+            if (Player2.Speed >= 0.5)
             {
                 Speed -= 0.25;
+                spt.Text = Speed.ToString();
             }
         }
 
         void OnSpeedPlusClicked(object? sender, EventArgs e)
         {
-            if (Player.Speed < 10)
+            if (Player2.Speed < 10)
             {
                 Speed += 0.25;
+                spt.Text = Speed.ToString();
             }
         }
 
@@ -457,19 +443,21 @@ namespace SyncBookPlayer
             ArgumentNullException.ThrowIfNull(sender);
 
             var newValue = ((Slider)sender).Value;
-            Player.SeekTo(TimeSpan.FromSeconds(newValue));
+            Player2.SeekTo(newValue);
 
-            Player.Play();
+            Player2.PlayAsync();
             PlayBtn.Source = "pause.png";
+            timer.Start();
             //var x = PositionSlider.Value;
         }
 
         void Slider_DragStarted(object sender, EventArgs e)
         {
-            Player.Pause();
+            Player2.PauseAsync();
+            timer.Stop();
         }
         //windows приколы
-        private void Player_MediaOpened(object sender, EventArgs e)
+        /*private void Player_MediaOpened(object sender, EventArgs e)
         {
             //Player.Pause();
             Player.Speed = Speed;
@@ -480,14 +468,15 @@ namespace SyncBookPlayer
             //PositionSlider.Value = Player.Position.TotalSeconds;
             //PositionSlider.Maximum = Player.Duration.TotalSeconds;
             //int x = 4;
-        }
+        }*/
 
-        private void playlistPicker_SelectedIndexChanged(object sender, EventArgs e)
+        private async void playlistPicker_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (AudioBook.MarkIndex != playlistPicker.SelectedIndex && PlayerMenu.IsVisible)
             {
                 AudioBook.MarkIndex = playlistPicker.SelectedIndex;
-                Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
+                await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
+                Player2.PlayAsync();
                 Task.Run(() =>
                 {
                     AudioBook.ListenedSec = 0;
@@ -508,12 +497,12 @@ namespace SyncBookPlayer
         private void Button_Clicked(object sender, EventArgs e)
         {
             //var hg = PositionSlider.Value;
-            if (Player.CurrentState == MediaElementState.Playing)
+            if (Player2.IsPlaying)
             {
-                Player.Pause();
+                Player2.PauseAsync();
                 timer.Stop();
-                if (Convert.ToInt32(Player.Position.TotalSeconds) > 2)
-                    AudioBook.MarkTime = Convert.ToInt32(Player.Position.TotalSeconds) - 2;
+                if (Convert.ToInt32(Player2.CurrentPosition) > 2)
+                    AudioBook.MarkTime = Convert.ToInt32(Player2.CurrentPosition) - 2;
                 else
                     AudioBook.MarkTime = 0;
                 AudioBook.Save();
@@ -521,7 +510,7 @@ namespace SyncBookPlayer
             }
             else
             {
-                Player.Play();
+                Player2.PlayAsync();
                 timer.Start();
                 PlayBtn.Source = "pause.png";
             }
@@ -538,13 +527,13 @@ namespace SyncBookPlayer
 
         private void ForwardBtn_Clicked(object sender, EventArgs e)
         {
-            Player.SeekTo(Player.Position + TimeSpan.FromSeconds(30 * Speed));
+            Player2.SeekTo(Player2.CurrentPosition + 30 * Speed);
             ForwardBtn.RotateTo(15, 100, Easing.Linear).ContinueWith((t) => ForwardBtn.RotateTo(0, 70, Easing.Linear));
         }
 
         private void BackBtn_Clicked(object sender, EventArgs e)
         {
-            Player.SeekTo(Player.Position - TimeSpan.FromSeconds(15 * Speed));
+            Player2.SeekTo(Player2.CurrentPosition - 15 * Speed);
             BackBtn.RotateTo(-15, 100, Easing.Linear).ContinueWith((t) => BackBtn.RotateTo(0, 70, Easing.Linear));
         }
 
@@ -648,8 +637,10 @@ namespace SyncBookPlayer
         }
         public void newSec()
         {
-            BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player.Position.TotalSeconds)) / Player.Speed;
-            BindingManager.Percent = (int)(((AudioBook.ListenedSec + Player.Position.TotalSeconds) / AudioBook.DurationSec) * 100);
+            BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player2.CurrentPosition)) / Player2.Speed;
+            BindingManager.Percent = (int)(((AudioBook.ListenedSec + Player2.CurrentPosition) / AudioBook.DurationSec) * 100);
+            PositionSlider.Value = Player2.CurrentPosition;
+            PositionSlider.Maximum = Player2.Duration;
         }
     }
 }

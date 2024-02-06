@@ -109,6 +109,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\MauiAudio\MauiAudio.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="View\BookPlayer.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

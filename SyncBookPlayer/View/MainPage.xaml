@@ -120,11 +120,8 @@
 
 
             <toolkit:MediaElement 
-  x:Name="Player"
   ShouldShowPlaybackControls="False" 
-  MediaEnded="Player_MediaEnded"
-            IsVisible="false"
-            MediaOpened="Player_MediaOpened"/>
+            IsVisible="false"/>
             <Slider
             VerticalOptions="End"
             Margin="20,0,20,0"
@@ -133,8 +130,6 @@
     MaximumTrackColor="LightGray"
     DragStarted="Slider_DragStarted"
     DragCompleted="Slider_DragCompleted"
-    Maximum="{Binding Source={x:Reference Player}, Path=Duration.TotalSeconds}"
-    Value="{Binding Source={x:Reference Player}, Path=Position.TotalSeconds}"
             />
             <Grid ColumnDefinitions="*,*,*"
               Margin="0,0,0,15"
@@ -154,7 +149,7 @@
                 Margin="0,0,20,0"
                 Grid.Column="2"
                 HorizontalOptions="End"
-                Text="{Binding Source={x:Reference Player}, Path=Duration, Converter={StaticResource SecondsToStringConverter}}">
+                Text="{Binding Source={x:Reference PositionSlider}, Path=Maximum, Converter={StaticResource SecondsToStringConverter}}">
                 </Label>
             </Grid>
 
@@ -194,7 +189,7 @@
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="Speed:" />
-                            <Span Text="{Binding Source={x:Reference Player}, Path=Speed}" />
+                            <Span x:Name="spt"/>
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
