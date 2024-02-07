@@ -47,12 +47,6 @@ public class NativeAudioService : INativeAudioService
         return Task.CompletedTask;
     }
 
-    public Task SeekTo(double position)
-    {
-        avPlayer.PlayAtTime(position);
-        return Task.CompletedTask;
-    }
-
     public Task SetCurrentTime(double value)
     {
         avPlayer.PlayAtTime(value);

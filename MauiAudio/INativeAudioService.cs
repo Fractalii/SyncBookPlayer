@@ -7,8 +7,6 @@ public interface INativeAudioService
     Task InitializeAsync(MediaPlay media);
     Task PlayAsync(double position = 0);
 
-    Task SeekTo(double position);
-
     Task PauseAsync();
     ///<Summary>
     /// Set the current playback position (in seconds).

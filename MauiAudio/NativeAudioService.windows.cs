@@ -64,16 +64,6 @@ public class NativeAudioService : INativeAudioService
         return Task.CompletedTask;
     }
 
-    public Task SeekTo(double position)
-    {
-        if (mediaPlayer != null)
-        {
-            mediaPlayer.Position = TimeSpan.FromSeconds(position);
-        }
-
-        return Task.CompletedTask;
-    }
-
     public Task SetCurrentTime(double value)
     {
         if (mediaPlayer != null)

@@ -363,16 +363,18 @@ namespace SyncBookPlayer
                 });
             }
             BookCover.Source = AudioBook.Cover;
+            playlistPicker.ItemsSource = AudioBook.Playlist;
+            playlistPicker.SelectedIndex = AudioBook.MarkIndex;
+            //Player2 = NativeAudioService.Current;
             await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
-            Player2.PlayAsync();
-            //Player2.SeekTo(AudioBook.MarkTime);
+            await Player2.PlayAsync();
+            await Player2.SetCurrentTime(AudioBook.MarkTime);
             timer.Start();
-            //Player2.Speed = Speed;
+            Player2.Speed = Speed;
             spt.Text = Speed.ToString();
             //Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
             //Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
-            playlistPicker.ItemsSource = AudioBook.Playlist;
-            playlistPicker.SelectedIndex = AudioBook.MarkIndex;
+            
             AudioBook.State = Book._State.Started;
             newSec();
         }
@@ -392,7 +394,7 @@ namespace SyncBookPlayer
             }
         }
 
-        public void Player_MediaEnded(object? sender, EventArgs e)
+        public async void Player_MediaEnded(object? sender, EventArgs e)
         {
             if (AudioBook.Playlist.Count > AudioBook.MarkIndex + 1)
             {
@@ -400,12 +402,12 @@ namespace SyncBookPlayer
                 AudioBook.MarkTime = 0;
                 AudioBook.ListenedSec += Player2.Duration;
                 AudioBook.Save();
-                MainThread.BeginInvokeOnMainThread(() =>
+                MainThread.BeginInvokeOnMainThread(async() =>
                 {
-                    Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
+                    await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
                     //PositionSlider.Maximum = Player.Duration.TotalSeconds;
                     playlistPicker.SelectedIndex = AudioBook.MarkIndex;
-                    Player2.PlayAsync();
+                    await Player2.PlayAsync();
                     Player2.Speed = Speed;
                 });
             }
@@ -443,9 +445,9 @@ namespace SyncBookPlayer
             ArgumentNullException.ThrowIfNull(sender);
 
             var newValue = ((Slider)sender).Value;
-            Player2.SeekTo(newValue);
+            await Player2.SetCurrentTime(newValue);
 
-            Player2.PlayAsync();
+            await Player2.PlayAsync();
             PlayBtn.Source = "pause.png";
             timer.Start();
             //var x = PositionSlider.Value;
@@ -476,7 +478,7 @@ namespace SyncBookPlayer
             {
                 AudioBook.MarkIndex = playlistPicker.SelectedIndex;
                 await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
-                Player2.PlayAsync();
+                await Player2.PlayAsync();
                 Task.Run(() =>
                 {
                     AudioBook.ListenedSec = 0;
@@ -494,12 +496,12 @@ namespace SyncBookPlayer
             }
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        private async void Button_Clicked(object sender, EventArgs e)
         {
             //var hg = PositionSlider.Value;
             if (Player2.IsPlaying)
             {
-                Player2.PauseAsync();
+                await Player2.PauseAsync();
                 timer.Stop();
                 if (Convert.ToInt32(Player2.CurrentPosition) > 2)
                     AudioBook.MarkTime = Convert.ToInt32(Player2.CurrentPosition) - 2;
@@ -510,7 +512,7 @@ namespace SyncBookPlayer
             }
             else
             {
-                Player2.PlayAsync();
+                await Player2.PlayAsync();
                 timer.Start();
                 PlayBtn.Source = "pause.png";
             }
@@ -525,15 +527,15 @@ namespace SyncBookPlayer
             PlayBtn.ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => PlayBtn.ScaleTo(1, 70, Easing.SinOut));
         }
 
-        private void ForwardBtn_Clicked(object sender, EventArgs e)
+        private async void ForwardBtn_Clicked(object sender, EventArgs e)
         {
-            Player2.SeekTo(Player2.CurrentPosition + 30 * Speed);
+            await Player2.SetCurrentTime(Player2.CurrentPosition + 30 * Speed);
             ForwardBtn.RotateTo(15, 100, Easing.Linear).ContinueWith((t) => ForwardBtn.RotateTo(0, 70, Easing.Linear));
         }
 
-        private void BackBtn_Clicked(object sender, EventArgs e)
+        private async void BackBtn_Clicked(object sender, EventArgs e)
         {
-            Player2.SeekTo(Player2.CurrentPosition - 15 * Speed);
+            await Player2.SetCurrentTime(Player2.CurrentPosition - 15 * Speed);
             BackBtn.RotateTo(-15, 100, Easing.Linear).ContinueWith((t) => BackBtn.RotateTo(0, 70, Easing.Linear));
         }
 
