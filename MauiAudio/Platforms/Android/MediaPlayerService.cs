@@ -394,15 +394,19 @@ public class MediaPlayerService : Service,
     private async Task<Bitmap> GetImageBitmapFromUrl(string url)
     {
         Bitmap imageBitmap = null;
-
-        using (var webClient = new HttpClient())
-        {
-            var imageBytes = await webClient.GetByteArrayAsync(url);
-            if (imageBytes != null && imageBytes.Length > 0)
+        
+        if (url.Contains("http")){
+            using (var webClient = new HttpClient())
             {
-                imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
+                var imageBytes = await webClient.GetByteArrayAsync(url);
+                if (imageBytes != null && imageBytes.Length > 0)
+                {
+                    imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
+                }
             }
         }
+        else
+            imageBitmap = BitmapFactory.DecodeFile(url);
 
         return imageBitmap;
     }

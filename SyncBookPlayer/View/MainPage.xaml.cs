@@ -49,6 +49,8 @@ namespace SyncBookPlayer
             timer.Tick += (s, e) => newSec();
             Player2 = NativeAudioService.Current;
             Player2.PlayEnded += Player_MediaEnded;
+            Player2.IsPlayingChanged += Player2_IsPlayingChanged;
+            Player2.PlayNext += Player_MediaEnded;
 #if ANDROID
             PositionSlider.Margin = new Thickness(5,0,5,0);
 
@@ -71,6 +73,25 @@ namespace SyncBookPlayer
             PositionSlider.MaximumTrackColor = Color.FromArgb("777978");
 #endif
             GetFOlder();
+        }
+
+        private void Player2_IsPlayingChanged(object? sender, bool e)
+        {
+            if (!Player2.IsPlaying)
+            {
+                timer.Stop();
+                if (Convert.ToInt32(Player2.CurrentPosition) > 2)
+                    AudioBook.MarkTime = Convert.ToInt32(Player2.CurrentPosition) - 2;
+                else
+                    AudioBook.MarkTime = 0;
+                AudioBook.Save();
+                PlayBtn.Source = "play.png";
+            }
+            else
+            {
+                timer.Start();
+                PlayBtn.Source = "pause.png";
+            }
         }
 
         async void GetFOlder()
@@ -366,7 +387,8 @@ namespace SyncBookPlayer
             playlistPicker.ItemsSource = AudioBook.Playlist;
             playlistPicker.SelectedIndex = AudioBook.MarkIndex;
             //Player2 = NativeAudioService.Current;
-            await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
+            //await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
+            await Player2.InitializeAsync(new MediaPlay { URL= AudioBook.Playlist[AudioBook.MarkIndex] , Author=AudioBook.Author, Name=AudioBook.Title, Image=AudioBook.Cover});
             await Player2.PlayAsync();
             await Player2.SetCurrentTime(AudioBook.MarkTime);
             timer.Start();
@@ -404,7 +426,7 @@ namespace SyncBookPlayer
                 AudioBook.Save();
                 MainThread.BeginInvokeOnMainThread(async() =>
                 {
-                    await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
+                    await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
                     //PositionSlider.Maximum = Player.Duration.TotalSeconds;
                     playlistPicker.SelectedIndex = AudioBook.MarkIndex;
                     await Player2.PlayAsync();
@@ -477,7 +499,7 @@ namespace SyncBookPlayer
             if (AudioBook.MarkIndex != playlistPicker.SelectedIndex && PlayerMenu.IsVisible)
             {
                 AudioBook.MarkIndex = playlistPicker.SelectedIndex;
-                await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
+                await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
                 await Player2.PlayAsync();
                 Task.Run(() =>
                 {
