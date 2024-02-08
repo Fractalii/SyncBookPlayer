@@ -28,6 +28,7 @@ namespace SyncBookPlayer
         public bool isPlaying { get { return Player2.IsPlaying; } }
         PlayerViewModel BindingManager;
         IDispatcherTimer timer;
+        bool allowpick = true;
 /*#if ANDROID
         NotificationManager notificationManager;
         MediaSession mediaSession;
@@ -50,7 +51,7 @@ namespace SyncBookPlayer
             Player2 = NativeAudioService.Current;
             //Player2.PlayEnded += Player_MediaEnded;
             Player2.IsPlayingChanged += Player2_IsPlayingChanged;
-            Player2.PlayNext += Player_MediaEnded;
+            Player2.PlayNext += Player2_PlayNext;
 #if ANDROID
             PositionSlider.Margin = new Thickness(5,0,5,0);
 
@@ -418,30 +419,37 @@ namespace SyncBookPlayer
             }
         }
 
-        public async void Player_MediaEnded(object? sender, EventArgs e)
+        private async void Player2_PlayNext(object? sender, EventArgs e)
         {
-            if (AudioBook.Playlist.Count > AudioBook.MarkIndex + 1)
+            if (allowpick)
             {
-                AudioBook.MarkIndex++;
-                AudioBook.MarkTime = 0;
-                AudioBook.ListenedSec += Player2.Duration;
-                AudioBook.Save();
-                MainThread.BeginInvokeOnMainThread(async() =>
+                if (AudioBook.Playlist.Count > AudioBook.MarkIndex + 1)
                 {
+                    allowpick = false;
+                    AudioBook.MarkIndex++;
+                    AudioBook.MarkTime = 0;
+                    AudioBook.ListenedSec += Player2.Duration;
+                    AudioBook.Save();
                     await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
                     //PositionSlider.Maximum = Player.Duration.TotalSeconds;
-                    playlistPicker.SelectedIndex = AudioBook.MarkIndex;
+                    //allowpick = false;
+                    PlayerMenu.Dispatcher.Dispatch(() =>
+                    {
+                        playlistPicker.SelectedIndex = AudioBook.MarkIndex;
+                    });
+                    //allowpick = true;
                     //await Player2.SetCurrentTime(0);
                     await Player2.PlayAsync();
                     Player2.Speed = Speed;
                     PositionSlider.Maximum = Player2.Duration;
-                });
-            }
-            else
-            {
-                AudioBook.State = Book._State.Finished;
-                timer.Stop();
-                AudioBook.Save();
+                    allowpick = true;
+                }
+                else
+                {
+                    AudioBook.State = Book._State.Finished;
+                    timer.Stop();
+                    AudioBook.Save();
+                }
             }
 
             //secret.Text = AudioBook.Playlist[AudioBook.MarkIndex];
@@ -499,7 +507,7 @@ namespace SyncBookPlayer
 
         private async void playlistPicker_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (AudioBook.MarkIndex != playlistPicker.SelectedIndex && PlayerMenu.IsVisible)
+            if (AudioBook.MarkIndex != playlistPicker.SelectedIndex && PlayerMenu.IsVisible && allowpick)
             {
                 AudioBook.MarkIndex = playlistPicker.SelectedIndex;
                 await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
