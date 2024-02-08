@@ -390,6 +390,7 @@ namespace SyncBookPlayer
             //await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
             await Player2.InitializeAsync(new MediaPlay { URL= AudioBook.Playlist[AudioBook.MarkIndex] , Author=AudioBook.Author, Name=AudioBook.Title, Image=AudioBook.Cover});
             await Player2.PlayAsync();
+            PlayBtn.Source = "pause.png";
             await Player2.SetCurrentTime(AudioBook.MarkTime);
             timer.Start();
             Player2.Speed = Speed;
@@ -501,6 +502,8 @@ namespace SyncBookPlayer
                 AudioBook.MarkIndex = playlistPicker.SelectedIndex;
                 await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
                 await Player2.PlayAsync();
+                PlayBtn.Source = "pause.png";
+                Player2.Speed = Speed;
                 Task.Run(() =>
                 {
                     AudioBook.ListenedSec = 0;
@@ -570,6 +573,7 @@ namespace SyncBookPlayer
 
         private async void Button_Clicked_1(object sender, EventArgs e)
         {
+            timer.Stop();
             Closing();
 #if ANDROID
             Menu.IsVisible = true;

@@ -700,6 +700,21 @@ public class MediaPlayerService : Service,
         }
     }
 
+    public override void OnTaskRemoved(Intent rootIntent)
+    {
+        base.OnTaskRemoved(rootIntent);
+        if (mediaPlayer != null)
+        {
+            mediaPlayer.Release();
+            mediaPlayer = null;
+
+            NotificationHelper.StopNotification(ApplicationContext);
+            StopForeground(true);
+            ReleaseWifiLock();
+            UnregisterMediaSessionCompat();
+        }
+    }
+
     public async void OnAudioFocusChange(AudioFocus focusChange)
     {
         switch (focusChange)
