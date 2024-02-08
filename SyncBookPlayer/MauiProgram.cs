@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using SyncBookPlayer.View;
 using SyncBookPlayer.ViewModel;
 
 namespace SyncBookPlayer
@@ -12,7 +11,6 @@ namespace SyncBookPlayer
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkitMediaElement()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {

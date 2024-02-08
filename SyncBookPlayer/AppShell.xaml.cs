@@ -1,5 +1,4 @@
-﻿using SyncBookPlayer.View;
-
+﻿
 namespace SyncBookPlayer
 {
     public partial class AppShell : Shell

@@ -1,5 +1,4 @@
 ﻿//using Microsoft.UI;
-using SyncBookPlayer.View;
 //using Windows.Graphics;
 
 namespace SyncBookPlayer

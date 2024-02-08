@@ -117,11 +117,6 @@
                 Grid.Row="3"
                 SelectedIndexChanged="playlistPicker_SelectedIndexChanged">
             </Picker>
-
-
-            <toolkit:MediaElement 
-  ShouldShowPlaybackControls="False" 
-            IsVisible="false"/>
             <Slider
             VerticalOptions="End"
             Margin="20,0,20,0"
