@@ -682,9 +682,8 @@ namespace SyncBookPlayer
             BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player2.CurrentPosition)) / Player2.Speed;
             BindingManager.Percent = (int)(((AudioBook.ListenedSec + Player2.CurrentPosition) / AudioBook.DurationSec) * 100);
             PositionSlider.Value = Player2.CurrentPosition;
-#if WINDOWS
-            PositionSlider.Maximum = Player2.Duration;
-#endif
+            if(PositionSlider.Maximum == 0)
+                PositionSlider.Maximum = Player2.Duration;
         }
     }
 }
