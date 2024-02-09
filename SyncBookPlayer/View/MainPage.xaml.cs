@@ -52,28 +52,18 @@ namespace SyncBookPlayer
             //Player2.PlayEnded += Player_MediaEnded;
             Player2.IsPlayingChanged += Player2_IsPlayingChanged;
             Player2.PlayNext += Player2_PlayNext;
+            Player2.PlayPrevious += Player2_PlayPrevious;
 #if ANDROID
             PositionSlider.Margin = new Thickness(5,0,5,0);
-
-            /*notificationManager = (NotificationManager)Android.App.Application.Context.GetSystemService(Context.NotificationService);
-            var notificationChannel = new NotificationChannel("media_player_channel", "Media Player Channel", NotificationImportance.Low);
-            notificationManager.CreateNotificationChannel(notificationChannel);
-
-            mediaSession = new MediaSession(Android.App.Application.Context, "MediaSessionTag");
-            var mediaSessionCallback = new MediaSessionCallback();
-            mediaSession.SetCallback(mediaSessionCallback);
-
-            var pendingIntent = PendingIntent.GetActivity(Android.App.Application.Context, 0, new Intent(Android.App.Application.Context, typeof(MainActivity)), PendingIntentFlags.UpdateCurrent);
-            //var mediaStyle = new Android.Support.V7.App.NotificationCompat.MediaStyle();
-            //mediaStyle.SetMediaSession(mediaSession.SessionToken);
-            mediaSession.SetSessionActivity(pendingIntent);
-
-            var mediaStyle = new Android.Support.V4.Media.App.NotificationCompat.MediaStyle();
-            mediaStyle.SetMediaSession(mediaSession.SessionToken);*/
 #elif WINDOWS
             PositionSlider.MaximumTrackColor = Color.FromArgb("777978");
 #endif
             GetFOlder();
+        }
+
+        private async void Player2_PlayPrevious(object? sender, EventArgs e)
+        {
+            await Player2.SetCurrentTime(Player2.CurrentPosition - 15 * Speed);
         }
 
         private void Player2_IsPlayingChanged(object? sender, bool e)
@@ -256,26 +246,14 @@ namespace SyncBookPlayer
                     
                     if (book.Cover is null)
                     {
-                        //var mStream = new MemoryStream();
                         var firstPicture = bookFile.Tag.Pictures.FirstOrDefault();
                         if (firstPicture != null)
                         {
                             MemoryStream ms = new MemoryStream(firstPicture.Data.Data);
-                            //Microsoft.Maui.Graphics.IImage image = PlatformImage.FromStream(ms);
                             await File.WriteAllBytesAsync(Path.Combine(folder, "BookCover.jpg"), ms.ToArray());
-                            //System.Drawing.Image image = System.Drawing.Image.FromStream(ms);
-                            //image.Save(Path.Combine(folder, "BookCover.jpg"));
                             book.Cover = Path.Combine(folder, "BookCover.jpg");
-                            /*byte[] pData = firstPicture.Data.Data;
-                            mStream.Write(pData, 0, Convert.ToInt32(pData.Length));
-                            var bm = new Bitmap(mStream, false);
-                            mStream.Dispose();
-                            bm.Save(Path.Combine(folder, "BookCover.jpg"));
-                            book.Cover = Path.Combine(folder, "BookCover.jpg");*/
                         }
                     }
-                    //if (!loaded)
-                    //    book.Save();
                     library.Add(book);
                 }
             }
@@ -311,13 +289,6 @@ namespace SyncBookPlayer
         {
             if (((CollectionView)sender).SelectedItem != null)
             {
-
-                /*await Shell.Current.GoToAsync(nameof(BookPlayer), true,
-                new Dictionary<string, object>
-                {
-                    {"AudioBook",((CollectionView)sender).SelectedItem},
-                    {"Cover",((Book)((CollectionView)sender).SelectedItem).Cover}
-                });*/
                 Closing();
 
                 if ((Book)((CollectionView)sender).SelectedItem != AudioBook)
@@ -379,7 +350,6 @@ namespace SyncBookPlayer
             BookCover.Source = AudioBook.Cover;
             playlistPicker.ItemsSource = AudioBook.Playlist;
             playlistPicker.SelectedIndex = AudioBook.MarkIndex;
-            //Player2 = NativeAudioService.Current;
             //await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
             await Player2.InitializeAsync(new MediaPlay { URL= AudioBook.Playlist[AudioBook.MarkIndex] , Author=AudioBook.Author, Name=AudioBook.Title, Image=AudioBook.Cover});
             await Player2.PlayAsync();
@@ -389,9 +359,6 @@ namespace SyncBookPlayer
             timer.Start();
             Player2.Speed = Speed;
             spt.Text = Speed.ToString();
-            //Player.Source = AudioBook.Playlist[AudioBook.MarkIndex];
-            //Player.SeekTo(TimeSpan.FromSeconds(AudioBook.MarkTime));
-            
             AudioBook.State = Book._State.Started;
             newSec();
         }
