@@ -323,6 +323,7 @@ namespace SyncBookPlayer
                 PlayerMenu.TranslationY = Window.Height;
                 PlayerMenu.IsVisible = true;
                 await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
+                timer.Start();
 #if ANDROID
                 Menu.IsVisible = false;
 #endif
@@ -356,7 +357,6 @@ namespace SyncBookPlayer
             await Player2.SetCurrentTime(AudioBook.MarkTime);
             PlayBtn.Source = "pause.png";
             PositionSlider.Maximum = Player2.Duration;
-            timer.Start();
             Player2.Speed = Speed;
             spt.Text = Speed.ToString();
             AudioBook.State = Book._State.Started;
