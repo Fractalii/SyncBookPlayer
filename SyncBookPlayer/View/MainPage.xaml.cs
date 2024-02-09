@@ -307,14 +307,6 @@ namespace SyncBookPlayer
             //gs.Source = ImageSource.FromFile(library[0].Cover);
         }
 
-        private bool isBook(string folder)
-        {
-            var files = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToArray();
-            if (files.Length > 0)
-                return true;
-            return false;
-        }
-
         private async void libraryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (((CollectionView)sender).SelectedItem != null)
