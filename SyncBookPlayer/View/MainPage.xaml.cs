@@ -441,7 +441,10 @@ namespace SyncBookPlayer
                     //await Player2.SetCurrentTime(0);
                     await Player2.PlayAsync();
                     Player2.Speed = Speed;
-                    PositionSlider.Maximum = Player2.Duration;
+                    PlayerMenu.Dispatcher.Dispatch(() =>
+                    {
+                        PositionSlider.Maximum = Player2.Duration;
+                    });
                     allowpick = true;
                 }
                 else
