@@ -25,7 +25,7 @@
                     Clicked="PickFolder"
                     IsVisible="false"></Button>
 
-                <Label Text="Слушаете сейчас" HorizontalOptions="Center" FontSize="Medium"/>
+                <Label Text="Слушаете сейчас" HorizontalOptions="Center" FontSize="Medium" Padding="0,15,0,0"/>
 
                 <CollectionView x:Name="StartedView"
                     ItemsLayout="HorizontalList"
@@ -35,8 +35,8 @@
                                 x:DataType="model:Book">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <VerticalStackLayout WidthRequest="140" Margin="10,0,0,0" >
-                                <Image Source="{Binding Cover}" HeightRequest="140" WidthRequest="140"/>
+                            <VerticalStackLayout MaximumWidthRequest="180" Margin="5,0,5,0" >
+                                <Image Source="{Binding Cover}" HeightRequest="170" MinimumWidthRequest="180"/>
                                 <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
                         </DataTemplate>
@@ -53,8 +53,8 @@
                                 x:DataType="model:Book">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
-                                <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
+                            <VerticalStackLayout WidthRequest="160" Margin="5,0,5,0" >
+                                <Image Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160"/>
                                 <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
                         </DataTemplate>
@@ -71,8 +71,8 @@
                     x:DataType="model:Book">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <VerticalStackLayout WidthRequest="120" Margin="10,0,0,0" >
-                                <Image Source="{Binding Cover}" HeightRequest="120" WidthRequest="120"/>
+                            <VerticalStackLayout WidthRequest="160" Margin="5,0,5,0" >
+                                <Image Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160"/>
                                 <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
                         </DataTemplate>

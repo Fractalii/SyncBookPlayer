@@ -9,11 +9,13 @@ using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
 using MauiAudio;
+using Mp4Chapters;
 using Npgsql;
 using SkiaSharp;
 using SyncBookPlayer.Model;
 using SyncBookPlayer.ViewModel;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
 
@@ -236,6 +238,23 @@ namespace SyncBookPlayer
                     book.Playlist = files;
                     book.Playlist.Sort();
 
+                    /*if (book.Playlist.Count == 1)
+                    {
+                        if (book.Playlist[0].Contains(".m4b"))
+                        {
+                            using (var str = File.OpenRead(book.Playlist[0]))
+                            {
+                                var extractor = new ChapterExtractor(new StreamWrapper(str));
+                                Debug.WriteLine(extractor.IsMp4a());
+                                extractor.Run();
+                                foreach (var c in extractor.Chapters ?? new ChapterInfo[0])
+                                {
+                                    Debug.WriteLine("{0} -> {1}", c.Time, c.Name);
+                                }
+                            }
+                        }
+                    }*/
+
                     var bookFile = TagLib.File.Create(book.Playlist[0]);
                     book.Title = bookFile.Tag.Album;
 
@@ -320,9 +339,9 @@ namespace SyncBookPlayer
 
                 }
                 
-                PlayerMenu.TranslationY = Window.Height;
+                PlayerMenu.TranslationY = 0;
                 PlayerMenu.IsVisible = true;
-                await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
+                //await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
                 timer.Start();
 #if ANDROID
                 Menu.IsVisible = false;
