@@ -1,15 +1,10 @@
-﻿/*#if ANDROID
-using Android.App;
-using Android.Content;
-using Android.Media.Session;
-#endif*/
-using CommunityToolkit.Maui.Alerts;
+﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
 using MauiAudio;
-using Mp4Chapters;
+using Microsoft.Maui.Storage;
 using Npgsql;
 using SkiaSharp;
 using SyncBookPlayer.Model;
@@ -18,6 +13,8 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
+using ATL;
+using ATL.AudioData;
 
 namespace SyncBookPlayer
 {
@@ -242,33 +239,35 @@ namespace SyncBookPlayer
                     {
                         if (book.Playlist[0].Contains(".m4b"))
                         {
-                            using (var str = File.OpenRead(book.Playlist[0]))
-                            {
-                                var extractor = new ChapterExtractor(new StreamWrapper(str));
-                                Debug.WriteLine(extractor.IsMp4a());
-                                extractor.Run();
-                                foreach (var c in extractor.Chapters ?? new ChapterInfo[0])
-                                {
-                                    Debug.WriteLine("{0} -> {1}", c.Time, c.Name);
-                                }
-                            }
+                            //using (var str = File.OpenRead(book.Playlist[0]))
+                            //{
+                            //    var extractor = new ChapterExtractor(new StreamWrapper(str));
+                            //    Debug.WriteLine(extractor.IsMp4a());
+                            //    extractor.Run();
+                            //    foreach (var c in extractor.Chapters ?? new ChapterInfo[0])
+                            //    {
+                            //        Debug.WriteLine("{0} -> {1}", c.Time, c.Name);
+                            //    }
+                            //}
+                            Track theTrack = new Track(book.Playlist[0]);
+                            var n = theTrack.Chapters.ToList();
                         }
                     }*/
 
-                    var bookFile = TagLib.File.Create(book.Playlist[0]);
-                    book.Title = bookFile.Tag.Album;
+                    var bookFile = new Track(book.Playlist[0]);
+                    book.Title = bookFile.Album;
 
-                    if (book.Title is null)
+                    if (book.Title == "")
                         book.Title = Path.GetFileName(folder);
-                    book.Author = bookFile.Tag.FirstPerformer;
-                    book.Narrator = bookFile.Tag.FirstAlbumArtist;
+                    book.Author = bookFile.Artist;
+                    book.Narrator = bookFile.AlbumArtist;
                     
                     if (book.Cover is null)
                     {
-                        var firstPicture = bookFile.Tag.Pictures.FirstOrDefault();
-                        if (firstPicture != null)
+                        var firstPicture = bookFile.EmbeddedPictures;
+                        if (firstPicture.Count > 0)
                         {
-                            MemoryStream ms = new MemoryStream(firstPicture.Data.Data);
+                            MemoryStream ms = new MemoryStream(firstPicture[0].PictureData);
                             await File.WriteAllBytesAsync(Path.Combine(folder, "BookCover.jpg"), ms.ToArray());
                             book.Cover = Path.Combine(folder, "BookCover.jpg");
                         }
@@ -322,10 +321,10 @@ namespace SyncBookPlayer
                         int j = 0;
                         foreach (var item in AudioBook.Playlist)
                         {
-                            var bf = TagLib.File.Create(item);
-                            AudioBook.DurationSec += bf.Properties.Duration.TotalSeconds;
+                            var bf = new Track(item);
+                            AudioBook.DurationSec += bf.Duration;
                             if (j < AudioBook.MarkIndex)
-                                AudioBook.ListenedSec += bf.Properties.Duration.TotalSeconds;
+                                AudioBook.ListenedSec += bf.Duration;
                             j++;
                         }
                     });
@@ -506,9 +505,9 @@ namespace SyncBookPlayer
                     int j = 0;
                     foreach (var item in AudioBook.Playlist)
                     {
-                        var bf = TagLib.File.Create(item);
+                        var bf = new Track(item);
                         if (j < AudioBook.MarkIndex)
-                            AudioBook.ListenedSec += bf.Properties.Duration.TotalSeconds;
+                            AudioBook.ListenedSec += bf.Duration;
                         else
                             break;
                         j++;
