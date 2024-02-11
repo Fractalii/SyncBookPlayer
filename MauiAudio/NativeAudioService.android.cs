@@ -17,6 +17,7 @@ public class NativeAudioService : INativeAudioService
     float speed = 1;
     double balance = 0;
     bool muted=false;
+    LoudnessEnhancer le = null;
     private MediaPlayer mediaPlayer => instance != null &&
         instance.Binder.GetMediaPlayerService() != null ?
         instance.Binder.GetMediaPlayerService().mediaPlayer : null;
@@ -86,8 +87,8 @@ public class NativeAudioService : INativeAudioService
         PlaybackParams pp = mediaPlayer.PlaybackParams;
         pp.SetSpeed((float)speed);
         mediaPlayer.PlaybackParams = pp;
-        LoudnessEnhancer le = new LoudnessEnhancer(mediaPlayer.AudioSessionId);
-        le.SetTargetGain(700);
+        le = new LoudnessEnhancer(mediaPlayer.AudioSessionId);
+        le.SetTargetGain(800);
         le.SetEnabled(true);
         //mediaPlayer?.PlaybackParams.SetSpeed((float)speed);
         return Task.CompletedTask;

@@ -720,12 +720,12 @@ public class MediaPlayerService : Service,
         switch (focusChange)
         {
             case AudioFocus.Gain:
-                if (mediaPlayer == null)
-                    InitializePlayer();
+                if (mediaPlayer == null) { }
+                    //InitializePlayer();
 
                 if (!mediaPlayer.IsPlaying)
                 {
-                    mediaPlayer.Start();
+                    //mediaPlayer.Start();
                 }
 
                 mediaPlayer.SetVolume(1.0f, 1.0f);
