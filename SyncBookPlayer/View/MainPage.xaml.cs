@@ -338,10 +338,14 @@ namespace SyncBookPlayer
 
 
                 }
-                
+#if WINDOWS
+                PlayerMenu.TranslationY = Window.Height;
+                PlayerMenu.IsVisible = true;
+                await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
+#else
                 PlayerMenu.TranslationY = 0;
                 PlayerMenu.IsVisible = true;
-                //await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
+#endif
                 timer.Start();
 #if ANDROID
                 Menu.IsVisible = false;
