@@ -179,6 +179,11 @@ namespace SyncBookPlayer
                 var files = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToList();
                 if (files.Count > 0)
                 {
+//#if DEBUG
+//                    if (folder == "/storage/emulated/0/Книги/Alex Kingston - Doctor Who The Ruby's Curse River Song Novel")
+//                        System.Diagnostics.Debugger.Break();
+//#endif
+
                     Book bookLocal = null;
                     Book bookSync = null;
                     Book book = new Book();
@@ -235,10 +240,11 @@ namespace SyncBookPlayer
                     book.Playlist = files;
                     book.Playlist.Sort();
 
-                    /*if (book.Playlist.Count == 1)
+                    if (book.Playlist.Count == 1)
                     {
                         if (book.Playlist[0].Contains(".m4b"))
                         {
+                            book.isM4b = true;
                             //using (var str = File.OpenRead(book.Playlist[0]))
                             //{
                             //    var extractor = new ChapterExtractor(new StreamWrapper(str));
@@ -249,10 +255,10 @@ namespace SyncBookPlayer
                             //        Debug.WriteLine("{0} -> {1}", c.Time, c.Name);
                             //    }
                             //}
-                            Track theTrack = new Track(book.Playlist[0]);
-                            var n = theTrack.Chapters.ToList();
+                            //Track theTrack = new Track(book.Playlist[0]);
+                            //var n = theTrack.Chapters.ToList();
                         }
-                    }*/
+                    }
 
                     var bookFile = new Track(book.Playlist[0]);
                     book.Title = bookFile.Album;
@@ -318,15 +324,32 @@ namespace SyncBookPlayer
 
                     Task.Run(() =>
                     {
+                        AudioBook.Chapters = new();
                         int j = 0;
                         foreach (var item in AudioBook.Playlist)
                         {
                             var bf = new Track(item);
                             AudioBook.DurationSec += bf.Duration;
+                            if (!AudioBook.isM4b)
+                                AudioBook.Chapters.Add(new Chapter {Path=item,Title=bf.Title, Id = j });
+                            else
+                            {
+                                var n = bf.Chapters.ToList();
+                                foreach (var x in n)
+                                    AudioBook.Chapters.Add(new Chapter {Title=x.Title, Time=x.StartTime/1000.0 });
+                            }
                             if (j < AudioBook.MarkIndex)
                                 AudioBook.ListenedSec += bf.Duration;
                             j++;
                         }
+                        Dispatcher.Dispatch(() =>
+                        {
+                            allowpick = false;
+                            ContentView.ItemsSource = AudioBook.Chapters;
+                            if (!AudioBook.isM4b)
+                                ContentView.SelectedItem = AudioBook.Chapters[AudioBook.MarkIndex];
+                            allowpick = true;
+                        });
                     });
                     //var elapsedMs = watch.ElapsedMilliseconds;
 
@@ -416,7 +439,7 @@ namespace SyncBookPlayer
                     //allowpick = false;
                     PlayerMenu.Dispatcher.Dispatch(() =>
                     {
-                        playlistPicker.SelectedIndex = AudioBook.MarkIndex;
+                        ContentView.SelectedItem = AudioBook.Chapters[AudioBook.MarkIndex];
                     });
                     //allowpick = true;
                     //await Player2.SetCurrentTime(0);
@@ -665,6 +688,52 @@ namespace SyncBookPlayer
             PositionSlider.Value = Player2.CurrentPosition;
             if(PositionSlider.Maximum == 0)
                 PositionSlider.Maximum = Player2.Duration;
+        }
+
+        private async void Button_Clicked_2(object sender, EventArgs e)
+        {
+            if (BookFrame.IsVisible) { 
+                BookFrame.IsVisible = false;
+                ContentView.IsVisible = true;
+            }
+            else
+            {
+                BookFrame.IsVisible = true;
+                ContentView.IsVisible = false;
+            }
+        }
+
+        private async void ContentView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            if (PlayerMenu.IsVisible && allowpick && ContentView.SelectedItem != null)
+            {
+                if (!AudioBook.isM4b) { 
+                    AudioBook.MarkIndex = ((Chapter)ContentView.SelectedItem).Id;
+                    await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
+                    await Player2.PlayAsync();
+                    PlayBtn.Source = "pause.png";
+                    Player2.Speed = Speed;
+                    PositionSlider.Maximum = Player2.Duration;
+                    Task.Run(() =>
+                    {
+                        AudioBook.ListenedSec = 0;
+                        int j = 0;
+                        foreach (var item in AudioBook.Playlist)
+                        {
+                            var bf = new Track(item);
+                            if (j < AudioBook.MarkIndex)
+                                AudioBook.ListenedSec += bf.Duration;
+                            else
+                                break;
+                            j++;
+                        }
+                    });
+                }
+                else
+                {
+                    await Player2.SetCurrentTime(((Chapter)ContentView.SelectedItem).Time);
+                }
+            }
         }
     }
 }

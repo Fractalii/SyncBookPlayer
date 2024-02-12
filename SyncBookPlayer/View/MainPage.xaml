@@ -102,7 +102,7 @@
         <Grid x:Name="PlayerMenu" RowDefinitions="Auto, Auto, 2*,Auto,Auto,*,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
             <Button Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Text="↓" FontSize="30" Padding="0"/>
             <Label Text="{Binding Percent, StringFormat='{0}%'}" Grid.Row="1" HorizontalOptions="Center"></Label>
-            <Frame
+            <Frame x:Name="BookFrame"
             Grid.Row="2"
             MaximumHeightRequest="300"
             MaximumWidthRequest="{Binding Source={RelativeSource Self}, Path=Height}"
@@ -113,10 +113,20 @@
                 <Image 
             x:Name="BookCover"/>
             </Frame>
-            <Picker x:Name="playlistPicker"
+            <ListView Grid.Row="2" x:Name="ContentView" IsVisible="false" x:DataType="model:Chapter" Margin="10,0,10,0" ItemSelected="ContentView_ItemSelected">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding Title}" VerticalOptions="Center" Margin="10,0,0,0"></Label>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Picker x:Name="playlistPicker" IsVisible="false"
                 Grid.Row="3"
                 SelectedIndexChanged="playlistPicker_SelectedIndexChanged">
             </Picker>
+            <Label Grid.Row="3" FontSize="Title" Margin="20,0,0,0" Text="{Binding Source={x:Reference ContentView}, Path=SelectedItem.Title}"></Label>
             <Slider
             VerticalOptions="End"
             Margin="20,0,20,0"
@@ -192,8 +202,8 @@
                 <Button Text="-" Clicked="OnSpeedMinusClicked" />
                 <Button Text="+" Clicked="OnSpeedPlusClicked" />
             </HorizontalStackLayout>
+            <Button Grid.Row="6" WidthRequest="50" HeightRequest="50" HorizontalOptions="End" Clicked="Button_Clicked_2"></Button>
         </Grid>
-
 
     </Grid>
 </ContentPage>

@@ -361,7 +361,7 @@ public class MediaPlayerService : Service,
                     }
                 }
                 UpdatePlaybackState(PlaybackStateCode.Buffering);
-                mediaPlayer.PrepareAsync();
+                mediaPlayer.Prepare();
 
                 AquireWifiLock();
 
