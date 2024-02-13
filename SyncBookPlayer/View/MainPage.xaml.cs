@@ -45,7 +45,7 @@ namespace SyncBookPlayer
             BindingManager = new PlayerViewModel();
             BindingContext = BindingManager;
             timer = Dispatcher.CreateTimer();
-            timer.Interval = TimeSpan.FromSeconds(0.5);
+            timer.Interval = TimeSpan.FromSeconds(0.2);
             timer.Tick += (s, e) => newSec();
             Player2 = NativeAudioService.Current;
             //Player2.PlayEnded += Player_MediaEnded;
