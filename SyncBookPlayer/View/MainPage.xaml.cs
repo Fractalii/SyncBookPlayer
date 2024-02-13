@@ -52,6 +52,9 @@ namespace SyncBookPlayer
             Player2.IsPlayingChanged += Player2_IsPlayingChanged;
             Player2.PlayNext += Player2_PlayNext;
             Player2.PlayPrevious += Player2_PlayPrevious;
+#if WINDOWS
+            Player2.BufferingFinished += Player2_BufferingFinished;
+#endif
 #if ANDROID
             PositionSlider.Margin = new Thickness(5,0,5,0);
 #elif WINDOWS
@@ -59,6 +62,16 @@ namespace SyncBookPlayer
 #endif
             GetFOlder();
         }
+#if WINDOWS
+        private void Player2_BufferingFinished(object? sender, EventArgs e)
+        {
+            Dispatcher.Dispatch(() =>
+            {
+                PositionSlider.Maximum = Player2.Duration;
+            });
+            
+        }
+#endif
 
         private async void Player2_PlayPrevious(object? sender, EventArgs e)
         {
@@ -686,8 +699,8 @@ namespace SyncBookPlayer
             BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player2.CurrentPosition)) / Player2.Speed;
             BindingManager.Percent = (int)(((AudioBook.ListenedSec + Player2.CurrentPosition) / AudioBook.DurationSec) * 100);
             PositionSlider.Value = Player2.CurrentPosition;
-            if(PositionSlider.Maximum == 0)
-                PositionSlider.Maximum = Player2.Duration;
+            //if(PositionSlider.Maximum == 0)
+            //    PositionSlider.Maximum = Player2.Duration;
         }
 
         private async void Button_Clicked_2(object sender, EventArgs e)

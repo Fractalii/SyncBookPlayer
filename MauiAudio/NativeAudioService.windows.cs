@@ -41,6 +41,7 @@ public class NativeAudioService : INativeAudioService
     public event EventHandler PlayEnded;
     public event EventHandler PlayNext;
     public event EventHandler PlayPrevious;
+    public event EventHandler BufferingFinished;
 
     public async Task InitializeAsync(string audioURI)
     {
@@ -102,6 +103,7 @@ public class NativeAudioService : INativeAudioService
             mediaPlayer.CommandManager.NextReceived += CommandManager_NextReceived;
             mediaPlayer.CommandManager.PauseReceived += CommandManager_PauseReceived;
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+            mediaPlayer.MediaOpened += MediaPlayer_BufferingFinished;
         }
         else
         {
@@ -113,6 +115,10 @@ public class NativeAudioService : INativeAudioService
     {
         PlayEnded?.Invoke(sender, EventArgs.Empty);
         PlayNext?.Invoke(sender, EventArgs.Empty);
+    }
+    private void MediaPlayer_BufferingFinished(MediaPlayer sender, object args)
+    {
+        BufferingFinished?.Invoke(sender, EventArgs.Empty);
     }
     private void CommandManager_NextReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerNextReceivedEventArgs args)
     {

@@ -27,6 +27,7 @@ public class NativeAudioService : INativeAudioService
     public event EventHandler PlayEnded;
     public event EventHandler PlayNext;
     public event EventHandler PlayPrevious;
+    public event EventHandler BufferingFinished;
 
     public async Task InitializeAsync(string audioURI)
     {
