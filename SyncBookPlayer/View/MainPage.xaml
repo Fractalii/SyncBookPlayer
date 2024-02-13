@@ -122,10 +122,6 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Picker x:Name="playlistPicker" IsVisible="false"
-                Grid.Row="3"
-                SelectedIndexChanged="playlistPicker_SelectedIndexChanged">
-            </Picker>
             <Label Grid.Row="3" FontSize="Title" Margin="20,0,0,0" Text="{Binding Source={x:Reference ContentView}, Path=SelectedItem.Title}"></Label>
             <Slider
             VerticalOptions="End"

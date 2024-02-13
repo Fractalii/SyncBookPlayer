@@ -407,8 +407,8 @@ namespace SyncBookPlayer
                 });
             }
             BookCover.Source = AudioBook.Cover;
-            playlistPicker.ItemsSource = AudioBook.Playlist;
-            playlistPicker.SelectedIndex = AudioBook.MarkIndex;
+            //playlistPicker.ItemsSource = AudioBook.Playlist;
+            //playlistPicker.SelectedIndex = AudioBook.MarkIndex;
             //await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
             await Player2.InitializeAsync(new MediaPlay { URL= AudioBook.Playlist[AudioBook.MarkIndex] , Author=AudioBook.Author, Name=AudioBook.Title, Image=AudioBook.Cover});
             await Player2.PlayAsync();
@@ -525,7 +525,7 @@ namespace SyncBookPlayer
             //int x = 4;
         }*/
 
-        private async void playlistPicker_SelectedIndexChanged(object sender, EventArgs e)
+        /*private async void playlistPicker_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (AudioBook.MarkIndex != playlistPicker.SelectedIndex && PlayerMenu.IsVisible && allowpick)
             {
@@ -550,7 +550,7 @@ namespace SyncBookPlayer
                     }
                 });
             }
-        }
+        }*/
 
         private async void Button_Clicked(object sender, EventArgs e)
         {
