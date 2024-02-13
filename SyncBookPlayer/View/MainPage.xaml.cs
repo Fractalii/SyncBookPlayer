@@ -65,11 +65,14 @@ namespace SyncBookPlayer
 #if WINDOWS
         private void Player2_BufferingFinished(object? sender, EventArgs e)
         {
-            Dispatcher.Dispatch(() =>
+            if (!AudioBook.isM4b)
             {
-                PositionSlider.Maximum = Player2.Duration;
-            });
-            
+                Dispatcher.Dispatch(() =>
+                {
+                    PositionSlider.Maximum = Player2.Duration;
+                });
+            }
+
         }
 #endif
 
@@ -348,8 +351,9 @@ namespace SyncBookPlayer
                             else
                             {
                                 var n = bf.Chapters.ToList();
+                                int i = 0;
                                 foreach (var x in n)
-                                    AudioBook.Chapters.Add(new Chapter {Title=x.Title, Time=x.StartTime/1000.0 });
+                                    AudioBook.Chapters.Add(new Chapter {Title=x.Title, Time=x.StartTime/1000.0, Id = i++ });
                             }
                             if (j < AudioBook.MarkIndex)
                                 AudioBook.ListenedSec += bf.Duration;
@@ -496,10 +500,10 @@ namespace SyncBookPlayer
         async void Slider_DragCompleted(object? sender, EventArgs e)
         {
             ArgumentNullException.ThrowIfNull(sender);
-
-            var newValue = ((Slider)sender).Value;
-            await Player2.SetCurrentTime(newValue);
-
+            if(!AudioBook.isM4b)
+                await Player2.SetCurrentTime(((Slider)sender).Value);
+            else
+                await Player2.SetCurrentTime(((Chapter)ContentView.SelectedItem).Time + ((Slider)sender).Value);
             await Player2.PlayAsync();
             PlayBtn.Source = "pause.png";
             timer.Start();
@@ -699,8 +703,37 @@ namespace SyncBookPlayer
             BindingManager.ToListen = (AudioBook.DurationSec - (AudioBook.ListenedSec + Player2.CurrentPosition)) / Player2.Speed;
             BindingManager.Percent = (int)(((AudioBook.ListenedSec + Player2.CurrentPosition) / AudioBook.DurationSec) * 100);
             PositionSlider.Value = Player2.CurrentPosition;
-            //if(PositionSlider.Maximum == 0)
-            //    PositionSlider.Maximum = Player2.Duration;
+            if (!AudioBook.isM4b)
+                PositionSlider.Value = Player2.CurrentPosition;
+            else
+            {
+                if (ContentView.SelectedItem != null)
+                    PositionSlider.Value = Player2.CurrentPosition - ((Chapter)ContentView.SelectedItem).Time;
+                if (ContentView.SelectedItem == null || ((Chapter)ContentView.SelectedItem).Time - 1 > Player2.CurrentPosition || AudioBook.Chapters[((Chapter)ContentView.SelectedItem).Id + 1].Time + 1 < Player2.CurrentPosition)
+                {
+                    for (int i = 0; i < AudioBook.Chapters.Count; i++)
+                    {
+                        if (i < AudioBook.Chapters.Count && ContentView.SelectedItem != AudioBook.Chapters[i])
+                        {
+                            if (Player2.CurrentPosition > AudioBook.Chapters[i].Time && Player2.CurrentPosition < AudioBook.Chapters[i + 1].Time && ContentView.SelectedItem != AudioBook.Chapters[i])
+                            {
+                                allowpick = false;
+                                ContentView.SelectedItem = AudioBook.Chapters[i];
+                                allowpick = true;
+                                PositionSlider.Maximum = AudioBook.Chapters[i + 1].Time - AudioBook.Chapters[i].Time;
+                                break;
+                            }
+                        }
+                        else if (ContentView.SelectedItem != AudioBook.Chapters[i])
+                        {
+                            allowpick = false;
+                            ContentView.SelectedItem = AudioBook.Chapters[i];
+                            allowpick = true;
+                            PositionSlider.Maximum = AudioBook.Chapters[i + 1].Time - AudioBook.Chapters[i].Time;
+                        }
+                    }
+                }
+            }
         }
 
         private async void Button_Clicked_2(object sender, EventArgs e)
@@ -744,7 +777,10 @@ namespace SyncBookPlayer
                 }
                 else
                 {
+                    PositionSlider.Maximum = AudioBook.Chapters[((Chapter)ContentView.SelectedItem).Id + 1].Time - ((Chapter)ContentView.SelectedItem).Time;
                     await Player2.SetCurrentTime(((Chapter)ContentView.SelectedItem).Time);
+                    await Player2.PlayAsync();
+                    PlayBtn.Source = "pause.png";
                 }
             }
         }
