@@ -28,6 +28,8 @@ namespace SyncBookPlayer
         PlayerViewModel BindingManager;
         IDispatcherTimer timer;
         bool allowpick = true;
+        double startTime;
+        double endTime;
 /*#if ANDROID
         NotificationManager notificationManager;
         MediaSession mediaSession;
@@ -337,6 +339,7 @@ namespace SyncBookPlayer
                     //var watch = System.Diagnostics.Stopwatch.StartNew();
                     AudioBook.ListenedSec = 0;
                     AudioBook.DurationSec = 0;
+                    ContentView.ItemsSource = null;
 
                     Task.Run(() =>
                     {
@@ -709,27 +712,25 @@ namespace SyncBookPlayer
             {
                 if (ContentView.SelectedItem != null)
                     PositionSlider.Value = Player2.CurrentPosition - ((Chapter)ContentView.SelectedItem).Time;
-                if (ContentView.SelectedItem == null || ((Chapter)ContentView.SelectedItem).Time - 1 > Player2.CurrentPosition || AudioBook.Chapters[((Chapter)ContentView.SelectedItem).Id + 1].Time + 1 < Player2.CurrentPosition)
+                if (ContentView.SelectedItem == null || startTime > Player2.CurrentPosition || endTime <= Player2.CurrentPosition)
                 {
                     for (int i = 0; i < AudioBook.Chapters.Count; i++)
                     {
-                        if (i < AudioBook.Chapters.Count && ContentView.SelectedItem != AudioBook.Chapters[i])
+                        if (Player2.CurrentPosition >= AudioBook.Chapters[i].Time && (i == AudioBook.Chapters.Count - 1 || Player2.CurrentPosition < AudioBook.Chapters[i + 1].Time - 1))
                         {
-                            if (Player2.CurrentPosition > AudioBook.Chapters[i].Time && Player2.CurrentPosition < AudioBook.Chapters[i + 1].Time && ContentView.SelectedItem != AudioBook.Chapters[i])
+                            if (ContentView.SelectedItem != AudioBook.Chapters[i])
                             {
                                 allowpick = false;
                                 ContentView.SelectedItem = AudioBook.Chapters[i];
                                 allowpick = true;
-                                PositionSlider.Maximum = AudioBook.Chapters[i + 1].Time - AudioBook.Chapters[i].Time;
-                                break;
                             }
-                        }
-                        else if (ContentView.SelectedItem != AudioBook.Chapters[i])
-                        {
-                            allowpick = false;
-                            ContentView.SelectedItem = AudioBook.Chapters[i];
-                            allowpick = true;
-                            PositionSlider.Maximum = AudioBook.Chapters[i + 1].Time - AudioBook.Chapters[i].Time;
+                            startTime = AudioBook.Chapters[i].Time;
+                            if (i < AudioBook.Chapters.Count - 1)
+                                endTime = AudioBook.Chapters[i + 1].Time;
+                            else
+                                endTime = Player2.Duration;
+                            PositionSlider.Maximum = endTime - startTime;
+                            break;
                         }
                     }
                 }
@@ -778,7 +779,10 @@ namespace SyncBookPlayer
                 }
                 else
                 {
-                    PositionSlider.Maximum = AudioBook.Chapters[((Chapter)ContentView.SelectedItem).Id + 1].Time - ((Chapter)ContentView.SelectedItem).Time;
+                    //if (((Chapter)ContentView.SelectedItem).Id == AudioBook.Chapters.Count - 1)
+                    //    PositionSlider.Maximum = Player2.Duration - ((Chapter)ContentView.SelectedItem).Time;
+                    //else
+                    //    PositionSlider.Maximum = AudioBook.Chapters[((Chapter)ContentView.SelectedItem).Id + 1].Time - ((Chapter)ContentView.SelectedItem).Time;
                     await Player2.SetCurrentTime(((Chapter)ContentView.SelectedItem).Time);
                     await Player2.PlayAsync();
                     PlayBtn.Source = "pause.png";
