@@ -760,6 +760,7 @@ namespace SyncBookPlayer
                     PlayBtn.Source = "pause.png";
                     Player2.Speed = Speed;
                     PositionSlider.Maximum = Player2.Duration;
+                    timer.Start();
                     Task.Run(() =>
                     {
                         AudioBook.ListenedSec = 0;
@@ -781,6 +782,7 @@ namespace SyncBookPlayer
                     await Player2.SetCurrentTime(((Chapter)ContentView.SelectedItem).Time);
                     await Player2.PlayAsync();
                     PlayBtn.Source = "pause.png";
+                    timer.Start();
                 }
             }
         }
