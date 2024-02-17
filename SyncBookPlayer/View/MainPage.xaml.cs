@@ -421,7 +421,8 @@ namespace SyncBookPlayer
             await Player2.PlayAsync();
             await Player2.SetCurrentTime(AudioBook.MarkTime);
             PlayBtn.Source = "pause.png";
-            PositionSlider.Maximum = Player2.Duration;
+            if (!AudioBook.isM4b)
+                PositionSlider.Maximum = Player2.Duration;
             Player2.Speed = Speed;
             spt.Text = Speed.ToString();
             AudioBook.State = Book._State.Started;
