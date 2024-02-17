@@ -742,11 +742,13 @@ namespace SyncBookPlayer
             if (BookFrame.IsVisible) { 
                 BookFrame.IsVisible = false;
                 ContentView.IsVisible = true;
+                ChapterName.IsVisible = false;
             }
             else
             {
                 BookFrame.IsVisible = true;
                 ContentView.IsVisible = false;
+                ChapterName.IsVisible = true;
             }
         }
 
