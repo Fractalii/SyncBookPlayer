@@ -732,7 +732,7 @@ public class MediaPlayerService : Service,
                 break;
             case AudioFocus.Loss:
                 //We have lost focus stop!
-                await Stop();
+                //await Stop();
                 break;
             case AudioFocus.LossTransient:
                 //We have lost focus for a short time, but likely to resume so pause

@@ -804,6 +804,8 @@ namespace SyncBookPlayer
                 BookCover.IsVisible =true;
             });
 #endif
+            if (Player2.IsPlaying)
+                timer.Start();
             await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
 #if ANDROID
             Menu.IsVisible = false;
