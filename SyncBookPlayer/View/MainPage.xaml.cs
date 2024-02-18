@@ -30,10 +30,6 @@ namespace SyncBookPlayer
         bool allowpick = true;
         double startTime;
         double endTime;
-/*#if ANDROID
-        NotificationManager notificationManager;
-        MediaSession mediaSession;
-#endif*/
         public MainPage()
         {
             InitializeComponent();
@@ -334,10 +330,12 @@ namespace SyncBookPlayer
             if (((CollectionView)sender).SelectedItem != null)
             {
                 Closing();
+                SmallPlay.IsVisible = true;
 
                 if ((Book)((CollectionView)sender).SelectedItem != AudioBook)
                 {
                     AudioBook = (Book)((CollectionView)sender).SelectedItem;
+                    BindingManager.Book = AudioBook;
                     //var watch = System.Diagnostics.Stopwatch.StartNew();
                     AudioBook.ListenedSec = 0;
                     AudioBook.DurationSec = 0;
@@ -386,14 +384,14 @@ namespace SyncBookPlayer
                 PlayerMenu.TranslationY = Window.Height;
                 PlayerMenu.IsVisible = true;
                 await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
-#else
-                PlayerMenu.TranslationY = 0;
-                PlayerMenu.IsVisible = true;
+//#else
+//                PlayerMenu.TranslationY = 0;
+//                PlayerMenu.IsVisible = true;
 #endif
                 timer.Start();
-#if ANDROID
-                Menu.IsVisible = false;
-#endif
+//#if ANDROID
+//                Menu.IsVisible = false;
+//#endif
                 ((CollectionView)sender).SelectedItem = null;
                 
             }
@@ -794,6 +792,23 @@ namespace SyncBookPlayer
                     timer.Start();
                 }
             }
+        }
+
+        private async void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        {
+            PlayerMenu.TranslationY = Window.Height;
+            PlayerMenu.IsVisible = true;
+#if ANDROID
+            Dispatcher.Dispatch(() =>
+            {
+                BookCover.IsVisible = false;
+                BookCover.IsVisible =true;
+            });
+#endif
+            await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
+#if ANDROID
+            Menu.IsVisible = false;
+#endif
         }
     }
 }

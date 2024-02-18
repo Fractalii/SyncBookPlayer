@@ -12,6 +12,8 @@ namespace SyncBookPlayer.ViewModel
         int percent;
         [ObservableProperty]
         int listened;
+        [ObservableProperty]
+        Book book;
         //[ObservableProperty]
         //string cover;
     }

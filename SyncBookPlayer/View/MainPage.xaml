@@ -15,7 +15,8 @@
     </ContentPage.Resources>
 
     <Grid>
-        <ScrollView Grid.Row="0" x:Name="Menu">
+        <Grid Grid.Row="0" x:Name="Menu" RowDefinitions="*,auto">
+        <ScrollView Grid.Row="0">
             <VerticalStackLayout
                 Spacing="20">
 
@@ -97,6 +98,19 @@
                 </CollectionView>-->
             </VerticalStackLayout>
         </ScrollView>
+            <Grid x:Name="SmallPlay" Grid.Row="1" BackgroundColor="#1c1c1c" HeightRequest="70" ColumnDefinitions="auto,*,auto" IsVisible="false">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+
+                </Grid.GestureRecognizers>
+                <Image Grid.Column="0" HeightRequest="60" WidthRequest="60" Source="{Binding Book.Cover}" Margin="10,0,0,0"/>
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="20,0,0,0">
+                <Label Text="{Binding Book.Title}"/>
+                <Label Text="{Binding Source={x:Reference ContentView}, Path=SelectedItem.Title}" TextColor="{StaticResource Gray200}"/>
+                </VerticalStackLayout>
+                <Button Grid.Column="2" HorizontalOptions="End" WidthRequest="50" HeightRequest="50" Clicked="Button_Clicked"/>
+            </Grid>
+        </Grid>
 
 
         <Grid x:Name="PlayerMenu" RowDefinitions="Auto, Auto, 2*,Auto,Auto,auto,auto,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
