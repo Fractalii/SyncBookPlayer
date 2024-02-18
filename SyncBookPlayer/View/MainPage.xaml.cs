@@ -234,8 +234,10 @@ namespace SyncBookPlayer
                     }
                     if (bookLocal != null && bookSync != null)
                     {
-                        if (bookLocal.SaveTime < bookSync.SaveTime)
+                        if (bookLocal.SaveTime < bookSync.SaveTime) { 
                             book.LoadData(bookSync);
+                            book.SaveLocal(JsonSerializer.Serialize(bookSync));
+                        }
                         else
                             book.LoadData(bookLocal);
                     }
