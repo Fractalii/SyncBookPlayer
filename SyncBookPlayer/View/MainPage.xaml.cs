@@ -426,7 +426,6 @@ namespace SyncBookPlayer
             Player2.Speed = Speed;
             spt.Text = Speed.ToString();
             AudioBook.State = Book._State.Started;
-            newSec();
         }
         protected override void OnDisappearing()
         {
