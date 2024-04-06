@@ -108,13 +108,13 @@
                 <Label Text="{Binding Book.Title}"/>
                 <Label Text="{Binding Source={x:Reference ContentView}, Path=SelectedItem.Title}" TextColor="{StaticResource Gray200}"/>
                 </VerticalStackLayout>
-                <Button Grid.Column="2" HorizontalOptions="End" WidthRequest="50" HeightRequest="50" Clicked="Button_Clicked"/>
+                <ImageButton x:Name="PlaySmall" Grid.Column="2" HorizontalOptions="End" WidthRequest="50" HeightRequest="50" Clicked="Button_Clicked" Source="smallpause.png" BackgroundColor="Transparent" Margin="0,0,10,0"/>
             </Grid>
         </Grid>
 
 
         <Grid x:Name="PlayerMenu" RowDefinitions="Auto, Auto, 2*,Auto,Auto,auto,auto,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
-            <Button Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Text="↓" FontSize="30" Padding="0"/>
+            <ImageButton Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Padding="0" Source="wrap.png" BackgroundColor="Transparent" Margin="10,0,0,0" HeightRequest="50"/>
             <Label Text="{Binding Percent, StringFormat='{0}%'}" Grid.Row="1" HorizontalOptions="Center"></Label>
             <Frame x:Name="BookFrame"
             Grid.Row="2"
@@ -212,7 +212,7 @@
                 <Button Text="-" Clicked="OnSpeedMinusClicked" />
                 <Button Text="+" Clicked="OnSpeedPlusClicked" />
             </HorizontalStackLayout>
-            <Button Grid.Row="7" WidthRequest="50" HeightRequest="50" HorizontalOptions="End" Clicked="Button_Clicked_2"></Button>
+            <ImageButton Grid.Row="7" WidthRequest="50" HeightRequest="50" HorizontalOptions="End" Clicked="Button_Clicked_2" Source="menu.png" BackgroundColor="Transparent" Margin="0,0,10,0" x:Name="MenuBtn"/>
         </Grid>
 
     </Grid>

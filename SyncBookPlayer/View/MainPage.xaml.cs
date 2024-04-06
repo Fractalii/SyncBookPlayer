@@ -572,12 +572,14 @@ namespace SyncBookPlayer
                     AudioBook.MarkTime = 0;
                 AudioBook.Save();
                 PlayBtn.Source = "play.png";
+                PlaySmall.Source = "smallplay.png";
             }
             else
             {
                 await Player2.PlayAsync();
                 timer.Start();
                 PlayBtn.Source = "pause.png";
+                PlaySmall.Source = "smallpause.png";
             }
 
             //isPaused = !isPaused;
@@ -588,6 +590,7 @@ namespace SyncBookPlayer
 
             // Animate the button to shrink and then return to normal size
             PlayBtn.ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => PlayBtn.ScaleTo(1, 70, Easing.SinOut));
+            PlaySmall.ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => PlaySmall.ScaleTo(1, 70, Easing.SinOut));
         }
 
         private async void ForwardBtn_Clicked(object sender, EventArgs e)
@@ -743,6 +746,7 @@ namespace SyncBookPlayer
                 BookFrame.IsVisible = false;
                 ContentView.IsVisible = true;
                 ChapterName.IsVisible = false;
+                ContentView.ScrollTo(ContentView.SelectedItem, ScrollToPosition.MakeVisible, false);
             }
             else
             {
@@ -750,6 +754,7 @@ namespace SyncBookPlayer
                 ContentView.IsVisible = false;
                 ChapterName.IsVisible = true;
             }
+            MenuBtn.ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => MenuBtn.ScaleTo(1, 70, Easing.SinOut));
         }
 
         private async void ContentView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
