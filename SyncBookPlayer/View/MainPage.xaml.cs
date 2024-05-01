@@ -35,6 +35,7 @@ namespace SyncBookPlayer
         public MainPage()
         {
             InitializeComponent();
+            Application.Current.UserAppTheme = AppTheme.Dark;
             //var app = Application.Current as App;
             //app.SharedData = "44";
             //var b = Shell.Current;
