@@ -301,6 +301,7 @@ namespace SyncBookPlayer
             NotStartedView.ItemsSource = library.Where(x => x.State == Book._State.NotStarted).ToList();
             StartedView.ItemsSource = library.Where(x => x.State == Book._State.Started).ToList();
             FinishedView.ItemsSource = library.Where(x => x.State == Book._State.Finished).ToList();
+            BookList.IsVisible = true;
             /*if (connected)
             {
                 await conn.CloseAsync();

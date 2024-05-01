@@ -16,7 +16,7 @@
 
     <Grid>
         <Grid Grid.Row="0" x:Name="Menu" RowDefinitions="*,auto">
-        <ScrollView Grid.Row="0">
+        <ScrollView Grid.Row="0" x:Name="BookList" IsVisible="False">
             <VerticalStackLayout
                 Spacing="20">
 
@@ -25,10 +25,13 @@
                     x:Name="ChooseFolderbtn"
                     Clicked="PickFolder"
                     IsVisible="false"></Button>
+                    <Grid ColumnDefinitions="*,auto,*">
+                        <Button Grid.Column="0" WidthRequest="50" HorizontalOptions="Start" Margin="10,0,0,0"/>
+                        <Label Grid.Column="1" Text="Слушаете сейчас" HorizontalOptions="Center" FontSize="Medium" Padding="0,15,0,0"/>
+                        <Button Grid.Column="2" WidthRequest="50" HorizontalOptions="End" Margin="0,0,10,0"/>
+                    </Grid>
 
-                <Label Text="Слушаете сейчас" HorizontalOptions="Center" FontSize="Medium" Padding="0,15,0,0"/>
-
-                <CollectionView x:Name="StartedView"
+                    <CollectionView x:Name="StartedView"
                     ItemsLayout="HorizontalList"
                     SelectionMode="Single"
                     HorizontalScrollBarVisibility="Never"
@@ -96,6 +99,7 @@
                     
                     </CollectionView.ItemTemplate>
                 </CollectionView>-->
+                    <Button WidthRequest="150" HeightRequest="70" Margin="0,0,0,10" Text="Добавить книгу"/>
             </VerticalStackLayout>
         </ScrollView>
             <Grid x:Name="SmallPlay" Grid.Row="1" BackgroundColor="#1c1c1c" HeightRequest="70" ColumnDefinitions="auto,*,auto" IsVisible="false">
