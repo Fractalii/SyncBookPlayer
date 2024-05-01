@@ -104,7 +104,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="Npgsql" Version="8.0.1" />
 		<PackageReference Include="SkiaSharp" Version="2.88.6" />
-		<PackageReference Include="z440.atl.core" Version="5.18.0" />
+		<PackageReference Include="z440.atl.core" Version="5.23.0" />
 	</ItemGroup>
 
 	<ItemGroup>
