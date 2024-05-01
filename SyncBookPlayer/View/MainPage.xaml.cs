@@ -21,7 +21,7 @@ namespace SyncBookPlayer
     public partial class MainPage : ContentPage
     {
         INativeAudioService Player2;
-        List<Book> library = new List<Book>();
+        List<Book> library;
         public Book AudioBook;
         double Speed { get { return AudioBook.Speed; } set { AudioBook.Speed = value; Player2.Speed = value; } }
         public bool isPlaying { get { return Player2.IsPlaying; } }
@@ -115,13 +115,14 @@ namespace SyncBookPlayer
 
         public async void GetBooks(string fld)
         {
+            library = new List<Book>();
             List<Book> SyncLib = new List<Book>();
             List<string> SyncLibFolders = new();
             //bool connected = false;
             //var conn = new NpgsqlConnection();
             try
             {
-                string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=30";
+                string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
                 var conn = new NpgsqlConnection(connString);
                 await conn.OpenAsync();
                 /*using (var command = new NpgsqlCommand("CREATE TABLE IF NOT EXISTS fractalis ( folder_name TEXT PRIMARY KEY, json_data TEXT);", conn))
@@ -315,14 +316,18 @@ namespace SyncBookPlayer
             await Permissions.RequestAsync<Permissions.StorageRead>();
 #endif
             var result = await FolderPicker.Default.PickAsync(default);
-            result.EnsureSuccess();
-            //await Toast.Make($"Folder picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show();
-            //using (FileStream fs = File.Create(result.Folder.Path + "/ggg.txt")) ;
-            await SecureStorage.Default.SetAsync("FolderPath", result.Folder.Path);
-            GetBooks(result.Folder.Path);
+            try
+            {
+                result.EnsureSuccess();
+                //await Toast.Make($"Folder picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show();
+                //using (FileStream fs = File.Create(result.Folder.Path + "/ggg.txt")) ;
+                await SecureStorage.Default.SetAsync("FolderPath", result.Folder.Path);
+                GetBooks(result.Folder.Path);
 
 
-            ChooseFolderbtn.IsVisible = false;
+                ChooseFolderbtn.IsVisible = false;
+            }
+            catch { }
             //gs.Source = ImageSource.FromFile(library[0].Cover);
         }
 
@@ -816,6 +821,12 @@ namespace SyncBookPlayer
 #if ANDROID
             Menu.IsVisible = false;
 #endif
+        }
+
+        private async void Button_Clicked_3(object sender, EventArgs e)
+        {
+            string MainFolder = await SecureStorage.Default.GetAsync("FolderPath");
+            GetBooks(MainFolder);
         }
     }
 }
