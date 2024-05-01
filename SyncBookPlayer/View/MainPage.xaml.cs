@@ -15,6 +15,8 @@ using System.Reflection;
 using System.Text.Json;
 using ATL;
 using ATL.AudioData;
+using Microsoft.Maui.Controls;
+using SyncBookPlayer.View;
 
 namespace SyncBookPlayer
 {
@@ -302,6 +304,7 @@ namespace SyncBookPlayer
             NotStartedView.ItemsSource = library.Where(x => x.State == Book._State.NotStarted).ToList();
             StartedView.ItemsSource = library.Where(x => x.State == Book._State.Started).ToList();
             FinishedView.ItemsSource = library.Where(x => x.State == Book._State.Finished).ToList();
+            StartLoading.IsRunning = false;
             BookList.IsVisible = true;
             /*if (connected)
             {
@@ -827,6 +830,11 @@ namespace SyncBookPlayer
         {
             string MainFolder = await SecureStorage.Default.GetAsync("FolderPath");
             GetBooks(MainFolder);
+        }
+
+        private async void Button_Clicked_4(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new AddBook(await SecureStorage.Default.GetAsync("FolderPath")));
         }
     }
 }

@@ -15,6 +15,7 @@
     </ContentPage.Resources>
 
     <Grid>
+        <ActivityIndicator IsRunning="true" Color="MediumPurple" x:Name="StartLoading" WidthRequest="80" HeightRequest="80"/>
         <Grid Grid.Row="0" x:Name="Menu" RowDefinitions="*,auto">
         <ScrollView Grid.Row="0" x:Name="BookList" IsVisible="False">
             <VerticalStackLayout
@@ -99,7 +100,7 @@
                     
                     </CollectionView.ItemTemplate>
                 </CollectionView>-->
-                    <Button WidthRequest="150" HeightRequest="70" Margin="0,0,0,10" Text="Добавить книгу"/>
+                    <Button WidthRequest="150" HeightRequest="70" Margin="0,0,0,10" Text="Добавить книгу" Clicked="Button_Clicked_4"/>
             </VerticalStackLayout>
         </ScrollView>
             <Grid x:Name="SmallPlay" Grid.Row="1" BackgroundColor="#1c1c1c" HeightRequest="70" ColumnDefinitions="auto,*,auto" IsVisible="false">
