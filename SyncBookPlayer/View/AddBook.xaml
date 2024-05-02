@@ -9,5 +9,11 @@
             Text="Welcome to .NET MAUI!"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
+        <Entry x:Name="vidurl"/>
+        <Button Clicked="Button_Clicked"/>
+        <Label x:Name="title"/>
+        <Image x:Name="preview"/>
+        <Button Clicked="Button_Clicked_1"/>
+        <ProgressBar x:Name="downloadprog"/>
     </VerticalStackLayout>
 </ContentPage>
