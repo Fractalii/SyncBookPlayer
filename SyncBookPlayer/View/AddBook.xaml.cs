@@ -72,7 +72,7 @@ public partial class AddBook : ContentPage
                 {
                     MainThread.BeginInvokeOnMainThread(() => downloadprog.Progress = percentage);
                 });
-                await youtube.Videos.Streams.DownloadAsync(streamInfo, Path.Combine(MainFolder, video.Title, "Книга.mp3"), progress);
+                await youtube.Videos.Streams.DownloadAsync(streamInfo, Path.Combine(MainFolder, video.Title, "youtube_video.webm"), progress);
             });
             await DisplayAlert("Готово", "Видео скачано. Обновите главную страницу, чтобы увидеть его в списке книг.", "OK");
         }
