@@ -166,147 +166,149 @@ namespace SyncBookPlayer
 
             //await conn.CloseAsync();
 
-
-
-            List<string> bookFolders = Directory.GetDirectories(fld, "*", SearchOption.AllDirectories).ToList();
-            bookFolders.Add(fld);
-            foreach (string folder in bookFolders)
+            await Task.Run(async () =>
             {
-                /*if(File.Exists(Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(folder) + ".json")))
-                {
-                    Book book = new Book();
-                    var rawFata = File.ReadAllText(Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(folder) + ".json"));
-                    book = JsonSerializer.Deserialize<Book>(rawFata);
-                    library.Add(book);
-                    continue;
-                }*/
-                /*using (var command = new NpgsqlCommand($"SELECT json_data FROM fractalis;", conn))
-                {
-                    var watch = System.Diagnostics.Stopwatch.StartNew();
-                    await using var reader = await command.ExecuteReaderAsync();
-                    var elapsedMs = watch.ElapsedMilliseconds;
 
-                    while (await reader.ReadAsync())
+                List<string> bookFolders = Directory.GetDirectories(fld, "*", SearchOption.AllDirectories).ToList();
+                bookFolders.Add(fld);
+                foreach (string folder in bookFolders)
+                {
+                    /*if(File.Exists(Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(folder) + ".json")))
                     {
-                        watch = System.Diagnostics.Stopwatch.StartNew();
-                        string x = reader.GetString(0);
-                        var elapsedMs2 = watch.ElapsedMilliseconds;
-                        int xfs = 0;
-                    }
-                }*/
-                var files = new List<string>();
-                try
-                {
-                    files = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToList();
-                }
-                catch {}
-                if (files.Count > 0)
-                {
-//#if DEBUG
-//                    if (folder == "/storage/emulated/0/Книги/Alex Kingston - Doctor Who The Ruby's Curse River Song Novel")
-//                        System.Diagnostics.Debugger.Break();
-//#endif
-
-                    Book bookLocal = null;
-                    Book bookSync = null;
-                    Book book = new Book();
-
-                    //bool loaded = true;
-
-                    book.Folder = Path.GetFileName(folder);
-                    /*if (connected)
+                        Book book = new Book();
+                        var rawFata = File.ReadAllText(Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(folder) + ".json"));
+                        book = JsonSerializer.Deserialize<Book>(rawFata);
+                        library.Add(book);
+                        continue;
+                    }*/
+                    /*using (var command = new NpgsqlCommand($"SELECT json_data FROM fractalis;", conn))
                     {
-                        using (var command = new NpgsqlCommand($"SELECT json_data FROM fractalis WHERE folder_name = @folder_name;", conn))
+                        var watch = System.Diagnostics.Stopwatch.StartNew();
+                        await using var reader = await command.ExecuteReaderAsync();
+                        var elapsedMs = watch.ElapsedMilliseconds;
+
+                        while (await reader.ReadAsync())
                         {
-                            command.Parameters.AddWithValue("@folder_name", book.Folder);
-                            await using var reader = await command.ExecuteReaderAsync();
-
-                            while (await reader.ReadAsync())
-                            {
-                                bookSync = (JsonSerializer.Deserialize<Book>(reader.GetString(0)));
-                            }
+                            watch = System.Diagnostics.Stopwatch.StartNew();
+                            string x = reader.GetString(0);
+                            var elapsedMs2 = watch.ElapsedMilliseconds;
+                            int xfs = 0;
                         }
                     }*/
+                    var files = new List<string>();
                     try
                     {
-                        bookSync = SyncLib[SyncLibFolders.IndexOf(book.Folder)];
+                        files = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToList();
                     }
-                    catch { }
-                    if (File.Exists(Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(folder) + ".json")))
+                    catch {}
+                    if (files.Count > 0)
                     {
-                        var rawFata = File.ReadAllText(Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(folder) + ".json"));
-                        bookLocal = JsonSerializer.Deserialize<Book>(rawFata);
-                    }
-                    if (bookLocal != null && bookSync != null)
-                    {
-                        if (bookLocal.SaveTime < bookSync.SaveTime) { 
-                            book.LoadData(bookSync);
-                            book.SaveLocal(JsonSerializer.Serialize(bookSync));
+    //#if DEBUG
+    //                    if (folder == "/storage/emulated/0/Книги/Alex Kingston - Doctor Who The Ruby's Curse River Song Novel")
+    //                        System.Diagnostics.Debugger.Break();
+    //#endif
+
+                        Book bookLocal = null;
+                        Book bookSync = null;
+                        Book book = new Book();
+
+                        //bool loaded = true;
+
+                        book.Folder = Path.GetFileName(folder);
+                        /*if (connected)
+                        {
+                            using (var command = new NpgsqlCommand($"SELECT json_data FROM fractalis WHERE folder_name = @folder_name;", conn))
+                            {
+                                command.Parameters.AddWithValue("@folder_name", book.Folder);
+                                await using var reader = await command.ExecuteReaderAsync();
+
+                                while (await reader.ReadAsync())
+                                {
+                                    bookSync = (JsonSerializer.Deserialize<Book>(reader.GetString(0)));
+                                }
+                            }
+                        }*/
+                        try
+                        {
+                            bookSync = SyncLib[SyncLibFolders.IndexOf(book.Folder)];
                         }
-                        else
+                        catch { }
+                        if (File.Exists(Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(folder) + ".json")))
+                        {
+                            var rawFata = File.ReadAllText(Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(folder) + ".json"));
+                            bookLocal = JsonSerializer.Deserialize<Book>(rawFata);
+                        }
+                        if (bookLocal != null && bookSync != null)
+                        {
+                            if (bookLocal.SaveTime < bookSync.SaveTime) { 
+                                book.LoadData(bookSync);
+                                book.SaveLocal(JsonSerializer.Serialize(bookSync));
+                            }
+                            else
+                                book.LoadData(bookLocal);
+                        }
+                        else if (bookLocal != null)
                             book.LoadData(bookLocal);
-                    }
-                    else if (bookLocal != null)
-                        book.LoadData(bookLocal);
-                    else if (bookSync != null)
-                        book.LoadData(bookSync);
-                    else
-                    {
-                        book.MarkIndex = 0;
-                        book.MarkTime = 0;
-                        book.State = Book._State.NotStarted;
-                        book.Speed = 1;
-                    }
-                    var cover = Directory.GetFiles(folder).Where(s => s.EndsWith(".jpg") || s.EndsWith(".png")).ToArray();
-                    if (cover.Length > 0)
-                        book.Cover = cover[0];
-
-
-                    book.Playlist = files;
-                    book.Playlist.Sort();
-
-                    if (book.Playlist.Count == 1)
-                    {
-                        if (book.Playlist[0].Contains(".m4b"))
+                        else if (bookSync != null)
+                            book.LoadData(bookSync);
+                        else
                         {
-                            book.isM4b = true;
-                            //using (var str = File.OpenRead(book.Playlist[0]))
-                            //{
-                            //    var extractor = new ChapterExtractor(new StreamWrapper(str));
-                            //    Debug.WriteLine(extractor.IsMp4a());
-                            //    extractor.Run();
-                            //    foreach (var c in extractor.Chapters ?? new ChapterInfo[0])
-                            //    {
-                            //        Debug.WriteLine("{0} -> {1}", c.Time, c.Name);
-                            //    }
-                            //}
-                            //Track theTrack = new Track(book.Playlist[0]);
-                            //var n = theTrack.Chapters.ToList();
+                            book.MarkIndex = 0;
+                            book.MarkTime = 0;
+                            book.State = Book._State.NotStarted;
+                            book.Speed = 1;
                         }
-                    }
+                        var cover = Directory.GetFiles(folder).Where(s => s.EndsWith(".jpg") || s.EndsWith(".png")).ToArray();
+                        if (cover.Length > 0)
+                            book.Cover = cover[0];
 
-                    var bookFile = new Track(book.Playlist[0]);
-                    book.Title = bookFile.Album;
 
-                    if (book.Title == "")
-                        book.Title = Path.GetFileName(folder);
-                    book.Author = bookFile.Artist;
-                    book.Narrator = bookFile.AlbumArtist;
+                        book.Playlist = files;
+                        book.Playlist.Sort();
+
+                        if (book.Playlist.Count == 1)
+                        {
+                            if (book.Playlist[0].Contains(".m4b"))
+                            {
+                                book.isM4b = true;
+                                //using (var str = File.OpenRead(book.Playlist[0]))
+                                //{
+                                //    var extractor = new ChapterExtractor(new StreamWrapper(str));
+                                //    Debug.WriteLine(extractor.IsMp4a());
+                                //    extractor.Run();
+                                //    foreach (var c in extractor.Chapters ?? new ChapterInfo[0])
+                                //    {
+                                //        Debug.WriteLine("{0} -> {1}", c.Time, c.Name);
+                                //    }
+                                //}
+                                //Track theTrack = new Track(book.Playlist[0]);
+                                //var n = theTrack.Chapters.ToList();
+                            }
+                        }
+
+                        var bookFile = new Track(book.Playlist[0]);
+                        book.Title = bookFile.Album;
+
+                        if (book.Title == "")
+                            book.Title = Path.GetFileName(folder);
+                        book.Author = bookFile.Artist;
+                        book.Narrator = bookFile.AlbumArtist;
                     
-                    if (book.Cover is null)
-                    {
-                        var firstPicture = bookFile.EmbeddedPictures;
-                        if (firstPicture.Count > 0)
+                        if (book.Cover is null)
                         {
-                            MemoryStream ms = new MemoryStream(firstPicture[0].PictureData);
-                            await File.WriteAllBytesAsync(Path.Combine(folder, "BookCover.jpg"), ms.ToArray());
-                            book.Cover = Path.Combine(folder, "BookCover.jpg");
+                            var firstPicture = bookFile.EmbeddedPictures;
+                            if (firstPicture.Count > 0)
+                            {
+                                MemoryStream ms = new MemoryStream(firstPicture[0].PictureData);
+                                await File.WriteAllBytesAsync(Path.Combine(folder, "BookCover.jpg"), ms.ToArray());
+                                book.Cover = Path.Combine(folder, "BookCover.jpg");
+                            }
                         }
+                        library.Add(book);
                     }
-                    library.Add(book);
                 }
-            }
-            //libraryList.ItemsSource = library;
+                //libraryList.ItemsSource = library;
+            });
             NotStartedView.ItemsSource = library.Where(x => x.State == Book._State.NotStarted).ToList();
             StartedView.ItemsSource = library.Where(x => x.State == Book._State.Started).ToList();
             FinishedView.ItemsSource = library.Where(x => x.State == Book._State.Finished).ToList();
