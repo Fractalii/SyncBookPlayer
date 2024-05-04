@@ -35,7 +35,7 @@ namespace SyncBookPlayer
         public MainPage()
         {
             InitializeComponent();
-            Application.Current.UserAppTheme = AppTheme.Dark;
+            //Application.Current.UserAppTheme = AppTheme.Dark;
             //var app = Application.Current as App;
             //app.SharedData = "44";
             //var b = Shell.Current;
@@ -422,7 +422,7 @@ namespace SyncBookPlayer
             if (AudioBook.Cover is not null) { 
                 Task.Run(() =>
                 {
-                    var col = Blend(Color.FromArgb(GetDominantColor(AudioBook.Cover)), BackgroundColor, 0.3);
+                    var col = Blend(Color.FromArgb(GetDominantColor(AudioBook.Cover)), Color.FromHex("131313"), 0.3);
                     PlayerMenu.Dispatcher.Dispatch(() =>
                     {
                         PlayerMenu.BackgroundColor = col;
@@ -633,6 +633,7 @@ namespace SyncBookPlayer
         {
             timer.Stop();
             Closing();
+            statusBar.StatusBarColor = BackgroundColor;
 #if ANDROID
             Menu.IsVisible = true;
 #endif
@@ -829,6 +830,7 @@ namespace SyncBookPlayer
             if (Player2.IsPlaying)
                 timer.Start();
             await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
+            statusBar.StatusBarColor = PlayerMenu.BackgroundColor;
 #if ANDROID
             Menu.IsVisible = false;
 #endif

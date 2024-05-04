@@ -6,6 +6,7 @@
              xmlns:converters="clr-namespace:SyncBookPlayer.Extra"
              xmlns:viewmodel="clr-namespace:SyncBookPlayer.ViewModel"
              xmlns:model="clr-namespace:SyncBookPlayer.Model"
+             xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
              x:DataType="viewmodel:PlayerViewModel"
              Shell.NavBarIsVisible="False">
 
@@ -13,6 +14,9 @@
         <toolkit:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />
         <converters:SecondsToStringConverter x:Key="SecondsToStringConverter" />
     </ContentPage.Resources>
+    <ContentPage.Behaviors>
+        <mct:StatusBarBehavior x:Name="statusBar"/>
+    </ContentPage.Behaviors>
 
     <Grid>
         <ActivityIndicator IsRunning="true" Color="MediumPurple" x:Name="StartLoading" WidthRequest="80" HeightRequest="80"/>
