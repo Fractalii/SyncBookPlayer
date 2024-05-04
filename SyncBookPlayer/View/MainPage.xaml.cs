@@ -92,12 +92,12 @@ namespace SyncBookPlayer
                 else
                     AudioBook.MarkTime = 0;
                 AudioBook.Save();
-                PlayBtn.Source = "play.png";
+                SetPlayImg();
             }
             else
             {
                 timer.Start();
-                PlayBtn.Source = "pause.png";
+                SetPauseiImg();
             }
         }
 
@@ -443,7 +443,7 @@ namespace SyncBookPlayer
             await Player2.InitializeAsync(new MediaPlay { URL= AudioBook.Playlist[AudioBook.MarkIndex] , Author=AudioBook.Author, Name=AudioBook.Title, Image=AudioBook.Cover});
             await Player2.PlayAsync();
             await Player2.SetCurrentTime(AudioBook.MarkTime);
-            PlayBtn.Source = "pause.png";
+            SetPauseiImg();
             if (!AudioBook.isM4b)
                 PositionSlider.Maximum = Player2.Duration;
             Player2.Speed = Speed;
@@ -531,7 +531,7 @@ namespace SyncBookPlayer
             else
                 await Player2.SetCurrentTime(((Chapter)ContentView.SelectedItem).Time + ((Slider)sender).Value);
             await Player2.PlayAsync();
-            PlayBtn.Source = "pause.png";
+            SetPauseiImg();
             timer.Start();
             //var x = PositionSlider.Value;
         }
@@ -582,6 +582,17 @@ namespace SyncBookPlayer
             }
         }*/
 
+        void SetPauseiImg()
+        {
+            PlayBtn.Source = "pause.png";
+            PlaySmall.Source = "smallpause.png";
+        }
+        void SetPlayImg()
+        {
+            PlayBtn.Source = "play.png";
+            PlaySmall.Source = "smallplay.png";
+        }
+
         private async void Button_Clicked(object sender, EventArgs e)
         {
             //var hg = PositionSlider.Value;
@@ -594,15 +605,13 @@ namespace SyncBookPlayer
                 else
                     AudioBook.MarkTime = 0;
                 AudioBook.Save();
-                PlayBtn.Source = "play.png";
-                PlaySmall.Source = "smallplay.png";
+                SetPlayImg();
             }
             else
             {
                 await Player2.PlayAsync();
                 timer.Start();
-                PlayBtn.Source = "pause.png";
-                PlaySmall.Source = "smallpause.png";
+                SetPauseiImg();
             }
 
             //isPaused = !isPaused;
@@ -789,7 +798,7 @@ namespace SyncBookPlayer
                     AudioBook.MarkIndex = ((Chapter)ContentView.SelectedItem).Id;
                     await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
                     await Player2.PlayAsync();
-                    PlayBtn.Source = "pause.png";
+                    SetPauseiImg();
                     Player2.Speed = Speed;
                     PositionSlider.Maximum = Player2.Duration;
                     timer.Start();
@@ -816,7 +825,7 @@ namespace SyncBookPlayer
                     //    PositionSlider.Maximum = AudioBook.Chapters[((Chapter)ContentView.SelectedItem).Id + 1].Time - ((Chapter)ContentView.SelectedItem).Time;
                     await Player2.SetCurrentTime(((Chapter)ContentView.SelectedItem).Time);
                     await Player2.PlayAsync();
-                    PlayBtn.Source = "pause.png";
+                    SetPauseiImg();
                     timer.Start();
                 }
             }
