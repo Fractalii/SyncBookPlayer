@@ -356,6 +356,8 @@ namespace SyncBookPlayer
                     //var watch = System.Diagnostics.Stopwatch.StartNew();
                     AudioBook.ListenedSec = 0;
                     AudioBook.DurationSec = 0;
+                    startTime = 0;
+                    endTime = 0;
                     ContentView.ItemsSource = null;
 
                     Task.Run(() =>
