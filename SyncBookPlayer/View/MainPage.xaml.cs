@@ -285,8 +285,12 @@ namespace SyncBookPlayer
                                 //var n = theTrack.Chapters.ToList();
                             }
                         }
-
-                        var bookFile = new Track(book.Playlist[0]);
+                        Track bookFile;
+                        try
+                        {
+                            bookFile = new Track(book.Playlist[0]);
+                        }
+                        catch { continue; }
                         book.Title = bookFile.Album;
 
                         if (book.Title == "")
