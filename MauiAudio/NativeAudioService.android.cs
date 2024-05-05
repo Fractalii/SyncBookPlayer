@@ -87,7 +87,14 @@ public class NativeAudioService : INativeAudioService
     {
         PlaybackParams pp = mediaPlayer.PlaybackParams;
         pp.SetSpeed((float)speed);
-        mediaPlayer.PlaybackParams = pp;
+        try
+        {
+            var t = mediaPlayer.IsPlaying;
+            mediaPlayer.PlaybackParams = pp;
+            if (!t)
+                mediaPlayer.Pause();
+        }
+        catch { }
         le = new LoudnessEnhancer(mediaPlayer.AudioSessionId);
         le.SetTargetGain(800);
         le.SetEnabled(true);

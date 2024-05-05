@@ -124,7 +124,7 @@
 
         <Grid x:Name="PlayerMenu" RowDefinitions="Auto, Auto, 2*,Auto,Auto,auto,auto,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
             <ImageButton Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Padding="0" Source="wrap.png" BackgroundColor="Transparent" Margin="10,0,0,0" HeightRequest="50"/>
-            <Label Text="{Binding Percent, StringFormat='{0}%'}" Grid.Row="1" HorizontalOptions="Center"></Label>
+            <Label Text="{Binding Percent, StringFormat='{0}%'}" Grid.Row="1" HorizontalOptions="Center" FontSize="Subtitle"/>
             <Frame x:Name="BookFrame"
             Grid.Row="2"
             MaximumHeightRequest="350"
@@ -208,20 +208,21 @@
 
             </HorizontalStackLayout>
 
-            <HorizontalStackLayout Grid.Row="7" Padding="0,10,0,10" Spacing="5" VerticalOptions="End">
-                <Label Margin="20,10">
+            <HorizontalStackLayout Grid.Row="7" Padding="0,0,0,10" Spacing="5" VerticalOptions="End" Margin="10,0,0,-8">
+                <ImageButton Source="speedminus.png" Clicked="OnSpeedMinusClicked" BackgroundColor="Transparent" HeightRequest="50" WidthRequest="50"/>
+                <Label VerticalOptions="Center">
                     <Label.FormattedText>
                         <FormattedString>
-                            <Span Text="Speed:" />
-                            <Span x:Name="spt"/>
+                            <Span Text="x" FontAttributes="Bold"/>
+                            <Span x:Name="spt" FontAttributes="Bold"/>
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
 
-                <Button Text="-" Clicked="OnSpeedMinusClicked" />
-                <Button Text="+" Clicked="OnSpeedPlusClicked" />
+
+                <ImageButton Source="speedplus.png" Clicked="OnSpeedPlusClicked" BackgroundColor="Transparent" HeightRequest="50" WidthRequest="50" HorizontalOptions="End"/>
             </HorizontalStackLayout>
-            <ImageButton Grid.Row="7" WidthRequest="50" HeightRequest="50" HorizontalOptions="End" Clicked="Button_Clicked_2" Source="menu.png" BackgroundColor="Transparent" Margin="0,0,10,0" x:Name="MenuBtn"/>
+            <ImageButton Grid.Row="7" WidthRequest="50" HeightRequest="50" HorizontalOptions="End" Clicked="Button_Clicked_2" Source="menu.png" BackgroundColor="Transparent" Margin="0,0,10,3" x:Name="MenuBtn"/>
         </Grid>
 
     </Grid>
