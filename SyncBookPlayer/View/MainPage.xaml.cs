@@ -72,6 +72,8 @@ namespace SyncBookPlayer
                 {
                     PositionSlider.Maximum = Player2.Duration;
                 });
+                if (AudioBook.isYT)
+                    AudioBook.DurationSec = Player2.Duration;
             }
 
         }
@@ -284,30 +286,37 @@ namespace SyncBookPlayer
                                 //Track theTrack = new Track(book.Playlist[0]);
                                 //var n = theTrack.Chapters.ToList();
                             }
+                            if (book.Playlist[0].EndsWith("youtube_video.webm"))
+                                book.isYT = true;
                         }
-                        Track bookFile;
-                        try
+                        if (!book.isYT)
                         {
-                            bookFile = new Track(book.Playlist[0]);
-                        }
-                        catch { continue; }
-                        book.Title = bookFile.Album;
-
-                        if (book.Title == "")
-                            book.Title = Path.GetFileName(folder);
-                        book.Author = bookFile.Artist;
-                        book.Narrator = bookFile.AlbumArtist;
-                    
-                        if (book.Cover is null)
-                        {
-                            var firstPicture = bookFile.EmbeddedPictures;
-                            if (firstPicture.Count > 0)
+                            Track bookFile;
+                            try
                             {
-                                MemoryStream ms = new MemoryStream(firstPicture[0].PictureData);
-                                await File.WriteAllBytesAsync(Path.Combine(folder, "BookCover.jpg"), ms.ToArray());
-                                book.Cover = Path.Combine(folder, "BookCover.jpg");
+                                bookFile = new Track(book.Playlist[0]);
+                            }
+                            catch { continue; }
+                            book.Title = bookFile.Album;
+
+                            if (book.Title == "")
+                                book.Title = Path.GetFileName(folder);
+                            book.Author = bookFile.Artist;
+                            book.Narrator = bookFile.AlbumArtist;
+
+                            if (book.Cover is null)
+                            {
+                                var firstPicture = bookFile.EmbeddedPictures;
+                                if (firstPicture.Count > 0)
+                                {
+                                    MemoryStream ms = new MemoryStream(firstPicture[0].PictureData);
+                                    await File.WriteAllBytesAsync(Path.Combine(folder, "BookCover.jpg"), ms.ToArray());
+                                    book.Cover = Path.Combine(folder, "BookCover.jpg");
+                                }
                             }
                         }
+                        else
+                            book.Title = Path.GetFileName(folder);
                         library.Add(book);
                     }
                 }
@@ -370,6 +379,11 @@ namespace SyncBookPlayer
                         int j = 0;
                         foreach (var item in AudioBook.Playlist)
                         {
+                            if (AudioBook.isYT)
+                            {
+                                AudioBook.Chapters.Add(new Chapter { Path = AudioBook.Playlist[0], Title = "Видео", Id = j });
+                                continue;
+                            }
                             var bf = new Track(item);
                             AudioBook.DurationSec += bf.Duration;
                             if (!AudioBook.isM4b)
@@ -445,7 +459,11 @@ namespace SyncBookPlayer
             await Player2.SetCurrentTime(AudioBook.MarkTime);
             SetPauseiImg();
             if (!AudioBook.isM4b)
+            {
                 PositionSlider.Maximum = Player2.Duration;
+                if (AudioBook.isYT)
+                    AudioBook.DurationSec = Player2.Duration;
+            }
             Player2.Speed = Speed;
             spt.Text = Speed.ToString();
             AudioBook.State = Book._State.Started;

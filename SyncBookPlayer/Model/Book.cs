@@ -32,6 +32,7 @@ namespace SyncBookPlayer.Model
         [JsonIgnore]
         public double DurationSec { get; set; }
         public bool isM4b = false;
+        public bool isYT = false;
         [JsonIgnore]
         public List<Chapter> Chapters { get; set; }
         public enum _State
