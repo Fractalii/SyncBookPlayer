@@ -19,7 +19,7 @@
     </ContentPage.Behaviors>
 
     <Grid>
-        <ActivityIndicator IsRunning="true" Color="MediumPurple" x:Name="StartLoading" WidthRequest="80" HeightRequest="80"/>
+        <ActivityIndicator IsRunning="true" Color="White" x:Name="StartLoading" WidthRequest="80" HeightRequest="80"/>
         <Grid Grid.Row="0" x:Name="Menu" RowDefinitions="*,auto">
         <ScrollView Grid.Row="0" x:Name="BookList" IsVisible="False">
             <VerticalStackLayout
