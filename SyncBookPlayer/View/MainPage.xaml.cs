@@ -268,7 +268,7 @@ namespace SyncBookPlayer
 
                         if (book.Playlist.Count == 1)
                         {
-                            if (book.Playlist[0].Contains(".m4b"))
+                            if (book.Playlist[0].EndsWith(".m4b"))
                             {
                                 book.isM4b = true;
                                 //using (var str = File.OpenRead(book.Playlist[0]))
