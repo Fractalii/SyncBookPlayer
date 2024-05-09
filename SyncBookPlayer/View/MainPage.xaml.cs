@@ -143,7 +143,7 @@ namespace SyncBookPlayer
                     command.ExecuteNonQuery();
                 }*/
                 //connected = true;
-                using (var command = new NpgsqlCommand($"SELECT * FROM {login};", conn))
+                using (var command = new NpgsqlCommand($"SELECT folder_name, json_data FROM books WHERE account_id={login};", conn))
                 {
                     using var reader = await command.ExecuteReaderAsync();
 

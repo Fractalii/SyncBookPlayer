@@ -90,7 +90,7 @@ namespace SyncBookPlayer.Model
                         //Console.Out.WriteLine("Opening connection");
                         conn.Open();
 
-                        using (var command = new NpgsqlCommand($"INSERT INTO {login} (folder_name, json_data) VALUES (@folder_name, @json_data) ON CONFLICT (folder_name) DO UPDATE SET json_data = EXCLUDED.json_data", conn))
+                        using (var command = new NpgsqlCommand($"INSERT INTO books (folder_name, json_data, account_id) VALUES (@folder_name, @json_data, {login}) ON CONFLICT (folder_name, account_id) DO UPDATE SET json_data = EXCLUDED.json_data", conn))
                         {
                             command.Parameters.AddWithValue("@folder_name", this.Folder);
                             command.Parameters.AddWithValue("@json_data", data);

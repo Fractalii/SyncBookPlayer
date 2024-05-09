@@ -30,7 +30,7 @@ public partial class Account : ContentPage
         string login = Login.Text == null ? "" : Login.Text.ToString().ToLower();
         string password = Pass1.Text == null ? "" : Pass1.Text.ToString();
         string password2 = Pass2.Text == null ? "" : Pass2.Text.ToString();
-        if (login == "acccounts" || !IsValidInput(login))
+        if (!IsValidInput(login))
         {
             allowlogin = false;
             Errors.Text += "Некорректное имя пользователя\n";
@@ -43,24 +43,30 @@ public partial class Account : ContentPage
         if (!NewAccount.IsChecked)
         {
             if (allowlogin) {
-                long result;
-                string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
-                var conn = new NpgsqlConnection(connString);
-                await conn.OpenAsync();
-                using (var command = new NpgsqlCommand($"SELECT COUNT(*) FROM acccounts WHERE login = @login AND password = @password;", conn))
+                try
                 {
-                    command.Parameters.AddWithValue("@login", login);
-                    command.Parameters.AddWithValue("@password", Md5(password));
-                    result = (long)command.ExecuteScalar();
+                    string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
+                    var conn = new NpgsqlConnection(connString);
+                    await conn.OpenAsync();
+                    using (var command = new NpgsqlCommand($"SELECT id FROM accounts WHERE login = @login AND password = @password;", conn))
+                    {
+                        command.Parameters.AddWithValue("@login", login);
+                        command.Parameters.AddWithValue("@password", Md5(password));
+                        var x = command.ExecuteScalar();
+                        if (x != null) {
+                            SaveAccount(x.ToString());
+                            CheckLogin(x.ToString());
+                        }
+                        else
+                        {
+                            Errors.Text += "Неверный логин или пароль\n";
+                        }
+                    }
+                    await conn.CloseAsync();
                 }
-                await conn.CloseAsync();
-                if (result > 0) {
-                    SaveAccount(login);
-                    CheckLogin();
-                }
-                else
+                catch
                 {
-                    Errors.Text += "Неверный логин или пароль\n";
+                    Errors.Text = "Ошибка подключения";
                 }
             }
         }
@@ -72,28 +78,34 @@ public partial class Account : ContentPage
             }
             if (allowlogin)
             {
-                string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
-                var conn = new NpgsqlConnection(connString);
-                await conn.OpenAsync();
-                using (var command = new NpgsqlCommand($"INSERT INTO acccounts (login, password) VALUES (@login, @password);", conn))
-                {
-                    command.Parameters.AddWithValue("@login", login);
-                    command.Parameters.AddWithValue("@password", Md5(password));
-                    if(command.ExecuteNonQuery() == 1)
+                try { 
+                    string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
+                    var conn = new NpgsqlConnection(connString);
+                    await conn.OpenAsync();
+                    using (var command = new NpgsqlCommand($"INSERT INTO accounts (login, password) VALUES (@login, @password) RETURNING id;", conn))
                     {
-                        SaveAccount(login);
-                        CheckLogin();
-                        using (var command2 = new NpgsqlCommand($"CREATE TABLE IF NOT EXISTS {login} ( folder_name TEXT PRIMARY KEY, json_data TEXT);", conn))
+                        command.Parameters.AddWithValue("@login", login);
+                        command.Parameters.AddWithValue("@password", Md5(password));
+                        try
                         {
-                            command2.ExecuteNonQuery();
+                            var x = (int)command.ExecuteScalar();
+                            if (x > 0)
+                            {
+                                SaveAccount(x.ToString());
+                                CheckLogin(x.ToString());
+                            }
+                        }
+                        catch
+                        {
+                            Errors.Text += "Ошибка регистрации\n";
                         }
                     }
-                    else
-                    {
-                        Errors.Text += "Ошибка регистрации\n";
-                    }
+                    await conn.CloseAsync();
                 }
-                await conn.CloseAsync();
+                catch
+                {
+                    Errors.Text = "Ошибка подключения";
+                }
             }
             
         }
@@ -125,10 +137,13 @@ public partial class Account : ContentPage
         SecureStorage.Default.Remove("User");
         CheckLogin();
     }
-    async void CheckLogin()
+    async void CheckLogin(string login2 = null)
     {
-
-        string login = await SecureStorage.Default.GetAsync("User");
+        string login;
+        if (login2 == null)
+            login = await SecureStorage.Default.GetAsync("User");
+        else
+            login = login2;
 
         if (login == null)
         {
@@ -137,7 +152,29 @@ public partial class Account : ContentPage
         }
         else
         {
-            Hello.Text = $"Здравствуйте, {login}!";
+            try
+            {
+                string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
+                var conn = new NpgsqlConnection(connString);
+                await conn.OpenAsync();
+                using (var command = new NpgsqlCommand($"SELECT login FROM accounts WHERE id = {login};", conn))
+                {
+                    var x = command.ExecuteScalar();
+                    if (x != null)
+                    {
+                        Hello.Text = $"Здравствуйте, {x}!";
+                    }
+                    else
+                    {
+                        Hello.Text = $"Ошибка авторизации";
+                    }
+                }
+                await conn.CloseAsync();
+            }
+            catch
+            {
+                Hello.Text = "Проверьте подключение к интернету";
+            }
             notlogined.IsVisible = false;
             logined.IsVisible = true;
         }
