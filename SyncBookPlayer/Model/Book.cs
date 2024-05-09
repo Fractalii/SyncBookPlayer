@@ -45,7 +45,7 @@ namespace SyncBookPlayer.Model
 
         public DateTime SaveTime { get; set; }
 
-        public async void Save()
+        public async void Save(string login = null)
         {
             //var app = Application.Current as App;
             //if (app.LastConnection + TimeSpan.FromSeconds(10) < DateTime.UtcNow)
@@ -55,7 +55,8 @@ namespace SyncBookPlayer.Model
                 var data = JsonSerializer.Serialize(this);
 
                 SaveLocal(data);
-                await Task.Run(() => SaveSync(data));
+                if (login != null)
+                    await Task.Run(() => SaveSync(data, login));
             }
 
 
@@ -77,7 +78,7 @@ namespace SyncBookPlayer.Model
             string filename = Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(Folder) + ".json");
             File.WriteAllText(filename, data);
         }
-        public async void SaveSync(string data)
+        public async void SaveSync(string data, string login)
         {
             if (MarkIndex > 0 || MarkTime > 100)
             {
@@ -89,7 +90,7 @@ namespace SyncBookPlayer.Model
                         //Console.Out.WriteLine("Opening connection");
                         conn.Open();
 
-                        using (var command = new NpgsqlCommand("INSERT INTO fractalis (folder_name, json_data) VALUES (@folder_name, @json_data) ON CONFLICT (folder_name) DO UPDATE SET json_data = EXCLUDED.json_data", conn))
+                        using (var command = new NpgsqlCommand($"INSERT INTO {login} (folder_name, json_data) VALUES (@folder_name, @json_data) ON CONFLICT (folder_name) DO UPDATE SET json_data = EXCLUDED.json_data", conn))
                         {
                             command.Parameters.AddWithValue("@folder_name", this.Folder);
                             command.Parameters.AddWithValue("@json_data", data);

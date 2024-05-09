@@ -25,6 +25,7 @@ namespace SyncBookPlayer
         INativeAudioService Player2;
         List<Book> library;
         public Book AudioBook;
+        string login;
         double Speed { get { return AudioBook.Speed; } set { AudioBook.Speed = value; Player2.Speed = value; } }
         public bool isPlaying { get { return Player2.IsPlaying; } }
         PlayerViewModel BindingManager;
@@ -93,7 +94,7 @@ namespace SyncBookPlayer
                     AudioBook.MarkTime = Convert.ToInt32(Player2.CurrentPosition) - 2;
                 else
                     AudioBook.MarkTime = 0;
-                AudioBook.Save();
+                AudioBook.Save(login);
                 SetPlayImg();
             }
             else
@@ -120,11 +121,14 @@ namespace SyncBookPlayer
 
         public async void GetBooks(string fld)
         {
+            login = await SecureStorage.Default.GetAsync("User");
             library = new List<Book>();
             List<Book> SyncLib = new List<Book>();
             List<string> SyncLibFolders = new();
             //bool connected = false;
             //var conn = new NpgsqlConnection();
+            if (login != null)
+            {
             try
             {
                 string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
@@ -139,7 +143,7 @@ namespace SyncBookPlayer
                     command.ExecuteNonQuery();
                 }*/
                 //connected = true;
-                using (var command = new NpgsqlCommand($"SELECT * FROM fractalis;", conn))
+                using (var command = new NpgsqlCommand($"SELECT * FROM {login};", conn))
                 {
                     using var reader = await command.ExecuteReaderAsync();
 
@@ -149,24 +153,25 @@ namespace SyncBookPlayer
                         SyncLib.Add(JsonSerializer.Deserialize<Book>(reader.GetString(1)));
                     }
                 }
-                conn.Close();
+                await conn.CloseAsync();
                 //await Toast.Make("Книги загружены", ToastDuration.Short).Show();
             }
             catch (Exception ex)
             {
                 await DisplayAlert("Синхронизация не удалась", ex.Message, "OK");
             }
-            /*using (var command = new NpgsqlCommand("SELECT json_data FROM fractalis;", conn))
-            {
-                await using var reader = await command.ExecuteReaderAsync();
-
-                while (await reader.ReadAsync())
+                /*using (var command = new NpgsqlCommand("SELECT json_data FROM fractalis;", conn))
                 {
-                    SyncLib.Add(JsonSerializer.Deserialize<Book>(reader.GetString(0)));
-                }
-            }*/
+                    await using var reader = await command.ExecuteReaderAsync();
 
-            //await conn.CloseAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        SyncLib.Add(JsonSerializer.Deserialize<Book>(reader.GetString(0)));
+                    }
+                }*/
+
+                //await conn.CloseAsync();
+            }
 
             await Task.Run(async () =>
             {
@@ -480,7 +485,7 @@ namespace SyncBookPlayer
                     AudioBook.MarkTime = Convert.ToInt32(Player2.CurrentPosition) - 2;
                 else
                     AudioBook.MarkTime = 0;
-                AudioBook.Save();
+                AudioBook.Save(login);
             }
         }
 
@@ -494,7 +499,7 @@ namespace SyncBookPlayer
                     AudioBook.MarkIndex++;
                     AudioBook.MarkTime = 0;
                     AudioBook.ListenedSec += Player2.Duration;
-                    AudioBook.Save();
+                    AudioBook.Save(login);
                     await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
                     //PositionSlider.Maximum = Player.Duration.TotalSeconds;
                     //allowpick = false;
@@ -516,7 +521,7 @@ namespace SyncBookPlayer
                 {
                     AudioBook.State = Book._State.Finished;
                     timer.Stop();
-                    AudioBook.Save();
+                    AudioBook.Save(login);
                 }
             }
 
@@ -622,7 +627,7 @@ namespace SyncBookPlayer
                     AudioBook.MarkTime = Convert.ToInt32(Player2.CurrentPosition) - 2;
                 else
                     AudioBook.MarkTime = 0;
-                AudioBook.Save();
+                AudioBook.Save(login);
                 SetPlayImg();
             }
             else
@@ -878,6 +883,11 @@ namespace SyncBookPlayer
         private async void Button_Clicked_4(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new AddBook(await SecureStorage.Default.GetAsync("FolderPath")));
+        }
+
+        private async void Button_Clicked_5(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new Account());
         }
     }
 }
