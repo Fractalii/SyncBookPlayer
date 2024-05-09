@@ -150,7 +150,7 @@ namespace SyncBookPlayer
                     }
                 }
                 conn.Close();
-                await Toast.Make("Книги загружены", ToastDuration.Short).Show();
+                //await Toast.Make("Книги загружены", ToastDuration.Short).Show();
             }
             catch (Exception ex)
             {
