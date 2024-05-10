@@ -26,7 +26,7 @@ public partial class AddBook : ContentPage
         vidurl.IsEnabled = true;
         if (!Uri.TryCreate(vidurl.Text, UriKind.Absolute, out _))
         {
-            await DisplayAlert("Invalid URL", "Please enter a valid url", "OK");
+            await DisplayAlert("Ошибка", "Некорректная ссылка.", "OK");
             return;
         }
         try
@@ -43,22 +43,22 @@ public partial class AddBook : ContentPage
         catch (YoutubeReExplode.Exceptions.RequestLimitExceededException)
         {
             downbut.IsEnabled = false;
-            await DisplayAlert("Error", "You have exceeded the youtube rate limit. Possible causes:\n\n1) Using this app too much\n2) Using a VPN", "OK");
+            await DisplayAlert("Ошибка", "Вы превысили лимит скачивания.", "OK");
         }
         catch (System.Net.Http.HttpRequestException)
         {
             downbut.IsEnabled = false;
-            await DisplayAlert("Error", "Please check your internet connection.", "OK");
+            await DisplayAlert("Ошибка", "Проверьте подключение к интернету.", "OK");
         }
         catch (System.ArgumentException)
         {
             downbut.IsEnabled = false;
-            await DisplayAlert("Error", "Your entered URL was not a Youtube video.", "OK");
+            await DisplayAlert("Ошибка", "Введенная ссылка не относится к YouTube-видео.", "OK");
         }
         catch (Exception exception)
         {
             downbut.IsEnabled = false;
-            await DisplayAlert("Error", "We couldn't open the URL", "OK");
+            await DisplayAlert("Ошибка", "Не удалось открыть ссылку.", "OK");
             //Console.WriteLine(exception);
         }
     }
@@ -100,7 +100,7 @@ public partial class AddBook : ContentPage
     protected override bool OnBackButtonPressed()
     {
         if (download) { 
-            DisplayAlert("Подождите!", "Видео еще скачивается. Пожалуйтса, не закрывайте страницу", "OK");
+            DisplayAlert("Подождите!", "Видео еще скачивается. Пожалуйтса, не закрывайте страницу.", "OK");
             return true;
         }
         else

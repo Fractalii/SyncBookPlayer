@@ -4,7 +4,8 @@
              x:Class="SyncBookPlayer.View.AddBook"
              Title="Добавить книгу"
              Shell.TitleColor="{StaticResource Gray100}">
-    <VerticalStackLayout VerticalOptions="Center" Margin="20,0,20,0">
+    <VerticalStackLayout VerticalOptions="Center" Margin="20,0,20,0" Spacing="10">
+        <Label Text="Внимание! Скачивание аудиокниг может потребовать несколько сотен мегайбайт интернет-трафика! Используйте острожно при подключении через мобильный интернет." Margin="0,0,0,20"/>
         <Label Text="Введите ссылку на видео в это поле:"/>
         <Entry x:Name="vidurl"/>
         <Button Clicked="Button_Clicked" Text="Найти видео" WidthRequest="180" Margin="0,10" x:Name="findbut"/>
