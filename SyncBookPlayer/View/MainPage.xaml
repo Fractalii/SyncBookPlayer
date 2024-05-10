@@ -34,7 +34,7 @@
             x:Name="ChooseFolderbtn"
             Clicked="PickFolder" MaximumWidthRequest="300"
             IsVisible="false" VerticalOptions="Center"></Button>
-            <ScrollView Grid.Row="1" x:Name="BookList" IsVisible="False">
+            <ScrollView Grid.Row="1" x:Name="BookList" IsVisible="False" VerticalScrollBarVisibility="Never">
                 <VerticalStackLayout
                 Spacing="20">
                     <Label Grid.Column="1" Text="Слушаете сейчас" HorizontalOptions="Center" FontSize="Medium"/>
