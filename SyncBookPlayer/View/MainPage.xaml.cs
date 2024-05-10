@@ -111,6 +111,8 @@ namespace SyncBookPlayer
 
             if (MainFolder == null)
             {
+                toolbar.IsVisible = false;
+                StartLoading.IsRunning = false;
                 ChooseFolderbtn.IsVisible = true;
             }
             else
@@ -123,9 +125,7 @@ namespace SyncBookPlayer
         {
             BookList.IsVisible = false;
             StartLoading.IsRunning = true;
-            top_Folder.IsEnabled = false;
-            top_User.IsEnabled = false;
-            top_Sync.IsEnabled = false;
+            toolbar.IsEnabled = false;
             login = await SecureStorage.Default.GetAsync("User");
             library = new List<Book>();
             List<Book> SyncLib = new List<Book>();
@@ -337,9 +337,7 @@ namespace SyncBookPlayer
             FinishedView.ItemsSource = library.Where(x => x.State == Book._State.Finished).ToList();
             StartLoading.IsRunning = false;
             BookList.IsVisible = true;
-            top_Folder.IsEnabled = true;
-            top_User.IsEnabled = true;
-            top_Sync.IsEnabled = true;
+            toolbar.IsEnabled = true;
             /*if (connected)
             {
                 await conn.CloseAsync();
@@ -363,6 +361,7 @@ namespace SyncBookPlayer
 
 
                 ChooseFolderbtn.IsVisible = false;
+                toolbar.IsVisible = true;
             }
             catch { }
             //gs.Source = ImageSource.FromFile(library[0].Cover);
