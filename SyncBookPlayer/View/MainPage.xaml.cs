@@ -36,7 +36,7 @@ namespace SyncBookPlayer
         public MainPage()
         {
             InitializeComponent();
-            //Application.Current.UserAppTheme = AppTheme.Dark;
+            Application.Current.UserAppTheme = AppTheme.Dark;
             //var app = Application.Current as App;
             //app.SharedData = "44";
             //var b = Shell.Current;
@@ -121,6 +121,11 @@ namespace SyncBookPlayer
 
         public async void GetBooks(string fld)
         {
+            BookList.IsVisible = false;
+            StartLoading.IsRunning = true;
+            top_Folder.IsEnabled = false;
+            top_User.IsEnabled = false;
+            top_Sync.IsEnabled = false;
             login = await SecureStorage.Default.GetAsync("User");
             library = new List<Book>();
             List<Book> SyncLib = new List<Book>();
@@ -332,6 +337,9 @@ namespace SyncBookPlayer
             FinishedView.ItemsSource = library.Where(x => x.State == Book._State.Finished).ToList();
             StartLoading.IsRunning = false;
             BookList.IsVisible = true;
+            top_Folder.IsEnabled = true;
+            top_User.IsEnabled = true;
+            top_Sync.IsEnabled = true;
             /*if (connected)
             {
                 await conn.CloseAsync();
