@@ -24,7 +24,7 @@
 		<ApplicationTitle>Sync Book Player</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.syncbookplayer</ApplicationId>
+		<ApplicationId>com.fractalistudios.syncbookplayer</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
