@@ -347,23 +347,33 @@ namespace SyncBookPlayer
 
         private async void PickFolder(object sender, EventArgs e)
         {
+            bool allow = true;
 #if ANDROID
-            await Permissions.RequestAsync<Permissions.StorageRead>();
+            var t = await Permissions.RequestAsync<Permissions.StorageRead>();
+            if (t == PermissionStatus.Denied)
+                allow = false;
 #endif
-            var result = await FolderPicker.Default.PickAsync(default);
-            try
+            if (allow)
             {
-                result.EnsureSuccess();
-                //await Toast.Make($"Folder picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show();
-                //using (FileStream fs = File.Create(result.Folder.Path + "/ggg.txt")) ;
-                await SecureStorage.Default.SetAsync("FolderPath", result.Folder.Path);
-                GetBooks(result.Folder.Path);
+                var result = await FolderPicker.Default.PickAsync(default);
+                try
+                {
+                    result.EnsureSuccess();
+                    //await Toast.Make($"Folder picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show();
+                    //using (FileStream fs = File.Create(result.Folder.Path + "/ggg.txt")) ;
+                    await SecureStorage.Default.SetAsync("FolderPath", result.Folder.Path);
+                    GetBooks(result.Folder.Path);
 
 
-                ChooseFolderbtn.IsVisible = false;
-                toolbar.IsVisible = true;
+                    ChooseFolderbtn.IsVisible = false;
+                    toolbar.IsVisible = true;
+                }
+                catch { }
             }
-            catch { }
+            else
+            {
+                await DisplayAlert("Ошибка", "Требуемые разрешения не предоставлены. Включите их в настройках устройства.", "OK");
+            }
             //gs.Source = ImageSource.FromFile(library[0].Cover);
         }
 

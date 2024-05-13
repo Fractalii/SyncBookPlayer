@@ -64,7 +64,7 @@
                                 x:DataType="model:Book">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <VerticalStackLayout WidthRequest="160" Margin="5,0,5,0" >
+                            <VerticalStackLayout MaximumWidthRequest="160" Margin="5,0,5,0" >
                                 <Image Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160"/>
                                 <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
@@ -82,7 +82,7 @@
                     x:DataType="model:Book">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <VerticalStackLayout WidthRequest="160" Margin="5,0,5,0" >
+                            <VerticalStackLayout MaximumWidthRequest="160" Margin="5,0,5,0" >
                                 <Image Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160"/>
                                 <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
