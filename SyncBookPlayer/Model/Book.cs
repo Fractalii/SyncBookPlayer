@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
-using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +44,7 @@ namespace SyncBookPlayer.Model
 
         public DateTime SaveTime { get; set; }
 
-        public async void Save(string login = null)
+        public void Save()
         {
             //var app = Application.Current as App;
             //if (app.LastConnection + TimeSpan.FromSeconds(10) < DateTime.UtcNow)
@@ -55,8 +54,6 @@ namespace SyncBookPlayer.Model
                 var data = JsonSerializer.Serialize(this);
 
                 SaveLocal(data);
-                if (login != null)
-                    await Task.Run(() => SaveSync(data, login));
             }
 
 
@@ -77,40 +74,6 @@ namespace SyncBookPlayer.Model
         {
             string filename = Path.Combine(FileSystem.AppDataDirectory, Path.GetFileName(Folder) + ".json");
             File.WriteAllText(filename, data);
-        }
-        public async void SaveSync(string data, string login)
-        {
-            if (MarkIndex > 0 || MarkTime > 100)
-            {
-                try
-                {
-                    string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer";
-                    using (var conn = new NpgsqlConnection(connString))
-                    {
-                        //Console.Out.WriteLine("Opening connection");
-                        conn.Open();
-
-                        using (var command = new NpgsqlCommand($"INSERT INTO books (folder_name, json_data, account_id) VALUES (@folder_name, @json_data, {login}) ON CONFLICT (folder_name, account_id) DO UPDATE SET json_data = EXCLUDED.json_data", conn))
-                        {
-                            command.Parameters.AddWithValue("@folder_name", this.Folder);
-                            command.Parameters.AddWithValue("@json_data", data);
-                            await command.ExecuteNonQueryAsync();
-                            //Console.Out.WriteLine("Finished dropping table (if existed)");
-                        }
-                        conn.Close();
-                        //SaveTime = DateTime.UtcNow;
-                        //await Toast.Make("Книга сохранена", ToastDuration.Short).Show();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    App.Current.Dispatcher.Dispatch(() =>
-                    {
-                        Toast.Make(ex.Message, ToastDuration.Short).Show();
-                    });
-                    SaveTime = DateTime.UtcNow - TimeSpan.FromSeconds(9);
-                }
-            }
         }
         public void LoadData(Book book)
         {

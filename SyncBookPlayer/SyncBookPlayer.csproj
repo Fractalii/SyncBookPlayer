@@ -21,10 +21,10 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>Sync Book Player</ApplicationTitle>
+		<ApplicationTitle>Book Player</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.fractalistudios.syncbookplayer</ApplicationId>
+		<ApplicationId>com.test.test</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -106,7 +106,6 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-		<PackageReference Include="Npgsql" Version="8.0.1" />
 		<PackageReference Include="SkiaSharp" Version="2.88.6" />
 		<PackageReference Include="YoutubeReExplodeZ" Version="7.0.6" />
 		<PackageReference Include="z440.atl.core" Version="5.23.0" />
@@ -117,9 +116,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="View\Account.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="View\AddBook.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
