@@ -21,7 +21,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>SyncBookPlayer</ApplicationTitle>
+		<ApplicationTitle>Sync Book Player</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.syncbookplayer</ApplicationId>
