@@ -1,22 +1,13 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
+﻿using ATL;
 using CommunityToolkit.Maui.Core.Extensions;
-using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Storage;
 using MauiAudio;
-using Microsoft.Maui.Storage;
 using Npgsql;
 using SkiaSharp;
 using SyncBookPlayer.Model;
-using SyncBookPlayer.ViewModel;
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text.Json;
-using ATL;
-using ATL.AudioData;
-using Microsoft.Maui.Controls;
 using SyncBookPlayer.View;
+using SyncBookPlayer.ViewModel;
+using System.Text.Json;
 
 namespace SyncBookPlayer
 {
@@ -134,37 +125,37 @@ namespace SyncBookPlayer
             //var conn = new NpgsqlConnection();
             if (login != null)
             {
-            try
-            {
-                string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
-                var conn = new NpgsqlConnection(connString);
-                await conn.OpenAsync();
-                /*using (var command = new NpgsqlCommand("CREATE TABLE IF NOT EXISTS fractalis ( folder_name TEXT PRIMARY KEY, json_data TEXT);", conn))
+                try
                 {
-                    command.ExecuteNonQuery();
-                }*/
-                /*using (var command = new NpgsqlCommand("TRUNCATE TABLE fractalis;", conn))
-                {
-                    command.ExecuteNonQuery();
-                }*/
-                //connected = true;
-                using (var command = new NpgsqlCommand($"SELECT folder_name, json_data FROM books WHERE account_id={login};", conn))
-                {
-                    using var reader = await command.ExecuteReaderAsync();
-
-                    while (reader.Read())
+                    string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
+                    var conn = new NpgsqlConnection(connString);
+                    await conn.OpenAsync();
+                    /*using (var command = new NpgsqlCommand("CREATE TABLE IF NOT EXISTS fractalis ( folder_name TEXT PRIMARY KEY, json_data TEXT);", conn))
                     {
-                        SyncLibFolders.Add(reader.GetString(0));
-                        SyncLib.Add(JsonSerializer.Deserialize<Book>(reader.GetString(1)));
+                        command.ExecuteNonQuery();
+                    }*/
+                    /*using (var command = new NpgsqlCommand("TRUNCATE TABLE fractalis;", conn))
+                    {
+                        command.ExecuteNonQuery();
+                    }*/
+                    //connected = true;
+                    using (var command = new NpgsqlCommand($"SELECT folder_name, json_data FROM books WHERE account_id={login};", conn))
+                    {
+                        using var reader = await command.ExecuteReaderAsync();
+
+                        while (reader.Read())
+                        {
+                            SyncLibFolders.Add(reader.GetString(0));
+                            SyncLib.Add(JsonSerializer.Deserialize<Book>(reader.GetString(1)));
+                        }
                     }
+                    await conn.CloseAsync();
+                    //await Toast.Make("Книги загружены", ToastDuration.Short).Show();
                 }
-                await conn.CloseAsync();
-                //await Toast.Make("Книги загружены", ToastDuration.Short).Show();
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Синхронизация не удалась", ex.Message, "OK");
-            }
+                catch (Exception ex)
+                {
+                    await DisplayAlert("Синхронизация не удалась", ex.Message, "OK");
+                }
                 /*using (var command = new NpgsqlCommand("SELECT json_data FROM fractalis;", conn))
                 {
                     await using var reader = await command.ExecuteReaderAsync();
@@ -212,13 +203,13 @@ namespace SyncBookPlayer
                     {
                         files = Directory.GetFiles(folder).Where(s => s.ToLower().EndsWith(".mp3") || s.ToLower().EndsWith(".wav") || s.ToLower().EndsWith(".m4a") || s.ToLower().EndsWith(".m4b") || s.ToLower().EndsWith(".mp4") || s.ToLower().EndsWith(".mkv") || s.ToLower().EndsWith(".ogg") || s.ToLower().EndsWith(".webm") || s.ToLower().EndsWith(".wma") || s.ToLower().EndsWith(".mp2") || s.ToLower().EndsWith(".aac") || s.ToLower().EndsWith(".flac")).ToList();
                     }
-                    catch {}
+                    catch { }
                     if (files.Count > 0)
                     {
-    //#if DEBUG
-    //                    if (folder == "/storage/emulated/0/Книги/Alex Kingston - Doctor Who The Ruby's Curse River Song Novel")
-    //                        System.Diagnostics.Debugger.Break();
-    //#endif
+                        //#if DEBUG
+                        //                    if (folder == "/storage/emulated/0/Книги/Alex Kingston - Doctor Who The Ruby's Curse River Song Novel")
+                        //                        System.Diagnostics.Debugger.Break();
+                        //#endif
 
                         Book bookLocal = null;
                         Book bookSync = null;
@@ -252,7 +243,8 @@ namespace SyncBookPlayer
                         }
                         if (bookLocal != null && bookSync != null)
                         {
-                            if (bookLocal.SaveTime < bookSync.SaveTime) { 
+                            if (bookLocal.SaveTime < bookSync.SaveTime)
+                            {
                                 book.LoadData(bookSync);
                                 book.SaveLocal(JsonSerializer.Serialize(bookSync));
                             }
@@ -409,13 +401,13 @@ namespace SyncBookPlayer
                             var bf = new Track(item);
                             AudioBook.DurationSec += bf.Duration;
                             if (!AudioBook.isM4b)
-                                AudioBook.Chapters.Add(new Chapter {Path=item,Title=bf.Title, Id = j });
+                                AudioBook.Chapters.Add(new Chapter { Path = item, Title = bf.Title, Id = j });
                             else
                             {
                                 var n = bf.Chapters.ToList();
                                 int i = 0;
                                 foreach (var x in n)
-                                    AudioBook.Chapters.Add(new Chapter {Title=x.Title, Time=x.StartTime/1000.0, Id = i++ });
+                                    AudioBook.Chapters.Add(new Chapter { Title = x.Title, Time = x.StartTime / 1000.0, Id = i++ });
                             }
                             if (j < AudioBook.MarkIndex)
                                 AudioBook.ListenedSec += bf.Duration;
@@ -433,9 +425,9 @@ namespace SyncBookPlayer
                     //var elapsedMs = watch.ElapsedMilliseconds;
 
                     StartBook();
-//#if ANDROID
+                    //#if ANDROID
                     //notificationManager.StartNotification();
-//#endif
+                    //#endif
 
 
                 }
@@ -443,16 +435,16 @@ namespace SyncBookPlayer
                 PlayerMenu.TranslationY = Window.Height;
                 PlayerMenu.IsVisible = true;
                 await PlayerMenu.TranslateTo(0, 0, 250, Easing.CubicInOut);
-//#else
-//                PlayerMenu.TranslationY = 0;
-//                PlayerMenu.IsVisible = true;
+                //#else
+                //                PlayerMenu.TranslationY = 0;
+                //                PlayerMenu.IsVisible = true;
 #endif
                 timer.Start();
-//#if ANDROID
-//                Menu.IsVisible = false;
-//#endif
+                //#if ANDROID
+                //                Menu.IsVisible = false;
+                //#endif
                 ((CollectionView)sender).SelectedItem = null;
-                
+
             }
         }
 
@@ -461,7 +453,8 @@ namespace SyncBookPlayer
 
         public async void StartBook()
         {
-            if (AudioBook.Cover is not null) { 
+            if (AudioBook.Cover is not null)
+            {
                 Task.Run(() =>
                 {
                     var col = Blend(Color.FromArgb(GetDominantColor(AudioBook.Cover)), Color.FromHex("131313"), 0.3);
@@ -469,14 +462,14 @@ namespace SyncBookPlayer
                     {
                         PlayerMenu.BackgroundColor = col;
                     });
-                
+
                 });
             }
             BookCover.Source = AudioBook.Cover;
             //playlistPicker.ItemsSource = AudioBook.Playlist;
             //playlistPicker.SelectedIndex = AudioBook.MarkIndex;
             //await Player2.InitializeAsync(AudioBook.Playlist[AudioBook.MarkIndex]);
-            await Player2.InitializeAsync(new MediaPlay { URL= AudioBook.Playlist[AudioBook.MarkIndex] , Author=AudioBook.Author, Name=AudioBook.Title, Image=AudioBook.Cover});
+            await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
             await Player2.PlayAsync();
             await Player2.SetCurrentTime(AudioBook.MarkTime);
             SetPauseiImg();
@@ -566,7 +559,7 @@ namespace SyncBookPlayer
         async void Slider_DragCompleted(object? sender, EventArgs e)
         {
             ArgumentNullException.ThrowIfNull(sender);
-            if(!AudioBook.isM4b)
+            if (!AudioBook.isM4b)
                 await Player2.SetCurrentTime(((Slider)sender).Value);
             else
                 await Player2.SetCurrentTime(((Chapter)ContentView.SelectedItem).Time + ((Slider)sender).Value);
@@ -749,9 +742,9 @@ namespace SyncBookPlayer
                 if (total > 500)
                     break;
             }*/
-            for (int x = 0; x < bmp.Width; x += bmp.Width/15)
+            for (int x = 0; x < bmp.Width; x += bmp.Width / 15)
             {
-                for (int y = 0; y < bmp.Height; y += bmp.Height/15)
+                for (int y = 0; y < bmp.Height; y += bmp.Height / 15)
                 {
                     SKColor clr = bmp.GetPixel(x, y);
 
@@ -815,7 +808,8 @@ namespace SyncBookPlayer
 
         private async void Button_Clicked_2(object sender, EventArgs e)
         {
-            if (BookFrame.IsVisible) { 
+            if (BookFrame.IsVisible)
+            {
                 BookFrame.IsVisible = false;
                 ContentView.IsVisible = true;
                 ChapterName.IsVisible = false;
@@ -834,7 +828,8 @@ namespace SyncBookPlayer
         {
             if (PlayerMenu.IsVisible && allowpick && ContentView.SelectedItem != null)
             {
-                if (!AudioBook.isM4b) { 
+                if (!AudioBook.isM4b)
+                {
                     AudioBook.MarkIndex = ((Chapter)ContentView.SelectedItem).Id;
                     await Player2.InitializeAsync(new MediaPlay { URL = AudioBook.Playlist[AudioBook.MarkIndex], Author = AudioBook.Author, Name = AudioBook.Title, Image = AudioBook.Cover });
                     await Player2.PlayAsync();
