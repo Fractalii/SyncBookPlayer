@@ -73,20 +73,21 @@ public partial class AddBook : ContentPage
             download = true;
             await Task.Run(async () =>
             {
-                Directory.CreateDirectory(Path.Combine(MainFolder, string.Concat(video.Title.Split(Path.GetInvalidFileNameChars()))));
+                string dir = string.Concat(video.Title.Split(Path.GetInvalidFileNameChars())).Replace("|", "");
+                Directory.CreateDirectory(Path.Combine(MainFolder, dir));
                 var youtube = new YoutubeClient();
                 var streamManifest = await youtube.Videos.Streams.GetManifestAsync(video.Url);
                 var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
                 var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
                 using (WebClient client = new WebClient())
                 {
-                    client.DownloadFileAsync(new Uri(biggestThumbnail.Url), Path.Combine(MainFolder, string.Concat(video.Title.Split(Path.GetInvalidFileNameChars())), "cover.jpg"));
+                    client.DownloadFileAsync(new Uri(biggestThumbnail.Url), Path.Combine(MainFolder, dir, "cover.jpg"));
                 }
                 IProgress<double> progress = new Progress<double>(percentage =>
                 {
                     MainThread.BeginInvokeOnMainThread(() => downloadprog.Progress = percentage);
                 });
-                await youtube.Videos.Streams.DownloadAsync(streamInfo, Path.Combine(MainFolder, string.Concat(video.Title.Split(Path.GetInvalidFileNameChars())), "youtube_video.webm"), progress);
+                await youtube.Videos.Streams.DownloadAsync(streamInfo, Path.Combine(MainFolder, dir, "youtube_video.webm"), progress);
             });
             await DisplayAlert("Готово", "Видео скачано. Обновите главную страницу, чтобы увидеть его в списке книг.", "OK");
             download = false;
