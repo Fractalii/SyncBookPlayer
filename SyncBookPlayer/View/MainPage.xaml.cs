@@ -254,7 +254,10 @@ namespace SyncBookPlayer
                         else if (bookLocal != null)
                             book.LoadData(bookLocal);
                         else if (bookSync != null)
+                        {
                             book.LoadData(bookSync);
+                            book.SaveLocal(JsonSerializer.Serialize(bookSync));
+                        }
                         else
                         {
                             book.MarkIndex = 0;
@@ -420,6 +423,7 @@ namespace SyncBookPlayer
                             if (!AudioBook.isM4b)
                                 ContentView.SelectedItem = AudioBook.Chapters[AudioBook.MarkIndex];
                             allowpick = true;
+                            newSec();
                         });
                     });
                     //var elapsedMs = watch.ElapsedMilliseconds;
@@ -654,8 +658,8 @@ namespace SyncBookPlayer
             //PlayBtn.Text = isPaused ? "⏸️" : "▶️";
 
             // Animate the button to shrink and then return to normal size
-            PlayBtn.ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => PlayBtn.ScaleTo(1, 70, Easing.SinOut));
-            PlaySmall.ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => PlaySmall.ScaleTo(1, 70, Easing.SinOut));
+            ((ImageButton)sender).ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => ((ImageButton)sender).ScaleTo(1, 70, Easing.SinOut));
+            //PlaySmall.ScaleTo(0.9, 100, Easing.SinIn).ContinueWith((t) => PlaySmall.ScaleTo(1, 70, Easing.SinOut));
         }
 
         private async void ForwardBtn_Clicked(object sender, EventArgs e)

@@ -737,6 +737,7 @@ public class MediaPlayerService : Service,
             case AudioFocus.LossTransient:
                 //We have lost focus for a short time, but likely to resume so pause
                 await Pause();
+                IsPlayingChanged?.Invoke(this, false);
                 break;
             case AudioFocus.LossTransientCanDuck:
                 //We have lost focus but should till play at a muted 10% volume

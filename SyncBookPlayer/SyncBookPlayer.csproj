@@ -109,7 +109,7 @@
 		<PackageReference Include="Npgsql" Version="8.0.1" />
 		<PackageReference Include="SkiaSharp" Version="2.88.6" />
 		<PackageReference Include="YoutubeReExplodeZ" Version="7.0.6" />
-		<PackageReference Include="z440.atl.core" Version="5.23.0" />
+		<PackageReference Include="z440.atl.core" Version="5.25.0" />
 	</ItemGroup>
 
 	<ItemGroup>
