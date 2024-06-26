@@ -73,7 +73,7 @@ namespace SyncBookPlayer
 
         private async void Player2_PlayPrevious(object? sender, EventArgs e)
         {
-            await Player2.SetCurrentTime(Player2.CurrentPosition - 15 * Speed);
+            await Player2.SetCurrentTime(Player2.CurrentPosition - 10 * Speed);
         }
 
         private void Player2_IsPlayingChanged(object? sender, bool e)
@@ -667,12 +667,14 @@ namespace SyncBookPlayer
         private async void ForwardBtn_Clicked(object sender, EventArgs e)
         {
             await Player2.SetCurrentTime(Player2.CurrentPosition + 30 * Speed);
+            newSec();
             ForwardBtn.RotateTo(15, 100, Easing.Linear).ContinueWith((t) => ForwardBtn.RotateTo(0, 70, Easing.Linear));
         }
 
         private async void BackBtn_Clicked(object sender, EventArgs e)
         {
-            await Player2.SetCurrentTime(Player2.CurrentPosition - 15 * Speed);
+            await Player2.SetCurrentTime(Player2.CurrentPosition - 10 * Speed);
+            newSec();
             BackBtn.RotateTo(-15, 100, Easing.Linear).ContinueWith((t) => BackBtn.RotateTo(0, 70, Easing.Linear));
         }
 
