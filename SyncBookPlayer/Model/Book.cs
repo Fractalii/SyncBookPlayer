@@ -29,6 +29,8 @@ namespace SyncBookPlayer.Model
         public bool isM4b = false;
         public bool isYT = false;
         [JsonIgnore]
+        public bool Downloaded { get; set; } = false;
+        [JsonIgnore]
         public List<Chapter> Chapters { get; set; }
         public enum _State
         {
@@ -113,6 +115,7 @@ namespace SyncBookPlayer.Model
             MarkTime = book.MarkTime;
             State = book.State;
             Speed = book.Speed;
+            SaveTime = book.SaveTime;
         }
 
     }

@@ -247,6 +247,7 @@ namespace SyncBookPlayer
                             {
                                 book.LoadData(bookSync);
                                 book.SaveLocal(JsonSerializer.Serialize(bookSync));
+                                book.Downloaded = true;
                             }
                             else
                                 book.LoadData(bookLocal);
@@ -257,6 +258,7 @@ namespace SyncBookPlayer
                         {
                             book.LoadData(bookSync);
                             book.SaveLocal(JsonSerializer.Serialize(bookSync));
+                            book.Downloaded = true;
                         }
                         else
                         {
@@ -328,7 +330,7 @@ namespace SyncBookPlayer
                 //libraryList.ItemsSource = library;
             });
             NotStartedView.ItemsSource = library.Where(x => x.State == Book._State.NotStarted).ToList();
-            StartedView.ItemsSource = library.Where(x => x.State == Book._State.Started).ToList();
+            StartedView.ItemsSource = library.Where(x => x.State == Book._State.Started).ToList().OrderByDescending(x => x.SaveTime);
             FinishedView.ItemsSource = library.Where(x => x.State == Book._State.Finished).ToList();
             StartLoading.IsRunning = false;
             BookList.IsVisible = true;
