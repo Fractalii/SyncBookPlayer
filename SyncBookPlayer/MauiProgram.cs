@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using FFImageLoading.Maui;
 using Microsoft.Extensions.Logging;
 using SyncBookPlayer.ViewModel;
 
@@ -12,6 +13,7 @@ namespace SyncBookPlayer
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
+                .UseFFImageLoading()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

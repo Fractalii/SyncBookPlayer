@@ -7,6 +7,8 @@
              xmlns:viewmodel="clr-namespace:SyncBookPlayer.ViewModel"
              xmlns:model="clr-namespace:SyncBookPlayer.Model"
              xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui"
              x:DataType="viewmodel:PlayerViewModel"
              Shell.NavBarIsVisible="False">
 
@@ -48,7 +50,11 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Grid MaximumWidthRequest="180" Margin="4,0,4,0" RowDefinitions="auto,auto">
-                                <Image Source="{Binding Cover}" HeightRequest="170" MinimumWidthRequest="180" Grid.Row="0"/>
+                                    <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="170" MinimumWidthRequest="180" Grid.Row="0" DownsampleToViewSize="True">
+                                        <ffimageloading:CachedImage.Transformations>
+                                            <fftransformations:RoundedTransformation Radius="10"/>
+                                        </ffimageloading:CachedImage.Transformations>
+                                    </ffimageloading:CachedImage>
                                     <Image Source="download.png" Grid.Row="0" HorizontalOptions="End" VerticalOptions="Start" HeightRequest="35" Margin="0,0,8,0" IsVisible="{Binding Downloaded}"/>
                                     <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation" Grid.Row="1" MaximumWidthRequest="160" Margin="0,3,0,0"/>
                             </Grid>
@@ -67,7 +73,11 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <VerticalStackLayout MaximumWidthRequest="160" Margin="3,0,3,0" >
-                                <Image Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160"/>
+                                <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160" DownsampleToViewSize="True">
+                                    <ffimageloading:CachedImage.Transformations>
+                                        <fftransformations:RoundedTransformation Radius="10"/>
+                                    </ffimageloading:CachedImage.Transformations>
+                                </ffimageloading:CachedImage>
                                 <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation" MaximumWidthRequest="140"/>
                             </VerticalStackLayout>
                         </DataTemplate>
@@ -85,7 +95,11 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <VerticalStackLayout MaximumWidthRequest="160" Margin="3,0,3,0" >
-                                <Image Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160"/>
+                                <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160" DownsampleToViewSize="True">
+                                    <ffimageloading:CachedImage.Transformations>
+                                        <fftransformations:RoundedTransformation Radius="10"/>
+                                    </ffimageloading:CachedImage.Transformations>
+                                </ffimageloading:CachedImage>
                                 <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation" MaximumWidthRequest="140"/>
                             </VerticalStackLayout>
                         </DataTemplate>
@@ -114,9 +128,12 @@
             <Grid x:Name="SmallPlay" Grid.Row="2" BackgroundColor="#1c1c1c" HeightRequest="70" ColumnDefinitions="auto,*,auto" IsVisible="false">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
-
                 </Grid.GestureRecognizers>
-                <Image Grid.Column="0" HeightRequest="60" WidthRequest="60" Source="{Binding Book.Cover}" Margin="10,0,0,0"/>
+                <ffimageloading:CachedImage Grid.Column="0" HeightRequest="60" WidthRequest="60" Source="{Binding Book.Cover}" Margin="10,0,0,0" DownsampleToViewSize="True">
+                    <ffimageloading:CachedImage.Transformations>
+                        <fftransformations:RoundedTransformation Radius="10"/>
+                    </ffimageloading:CachedImage.Transformations>
+                </ffimageloading:CachedImage>
                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="20,0,0,0">
                 <Label Text="{Binding Book.Title}"/>
                 <Label Text="{Binding Source={x:Reference ContentView}, Path=SelectedItem.Title}" TextColor="{StaticResource Gray200}"/>
@@ -129,17 +146,23 @@
         <Grid x:Name="PlayerMenu" RowDefinitions="Auto, Auto, 2*,Auto,Auto,auto,auto,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
             <ImageButton Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Padding="0" Source="wrap.png" BackgroundColor="Transparent" Margin="10,0,0,0" HeightRequest="50"/>
             <Label Text="{Binding Percent, StringFormat='{0}%'}" Grid.Row="1" HorizontalOptions="Center" FontSize="Subtitle"/>
-            <Frame x:Name="BookFrame"
+            <!--<Frame x:Name="BookFrame"
             Grid.Row="2"
             MaximumHeightRequest="350"
             MaximumWidthRequest="{Binding Source={RelativeSource Self}, Path=Height}"
             Padding="0"
             BorderColor="Transparent"
             BackgroundColor="Transparent"
-            CornerRadius="20">
-                <Image 
-            x:Name="BookCover"/>
-            </Frame>
+            CornerRadius="20">-->
+            <ffimageloading:CachedImage 
+                x:Name="BookCover"
+                Grid.Row="2"
+                MaximumHeightRequest="350">
+                <ffimageloading:CachedImage.Transformations>
+                    <fftransformations:RoundedTransformation Radius="10"/>
+                </ffimageloading:CachedImage.Transformations>
+            </ffimageloading:CachedImage>
+            <!--</Frame>-->
             <ListView Grid.Row="2" x:Name="ContentView" IsVisible="false" x:DataType="model:Chapter" Margin="10,0,10,0" ItemSelected="ContentView_ItemSelected">
                 <ListView.ItemTemplate>
                     <DataTemplate>

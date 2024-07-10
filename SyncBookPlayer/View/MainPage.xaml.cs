@@ -816,16 +816,16 @@ namespace SyncBookPlayer
 
         private async void Button_Clicked_2(object sender, EventArgs e)
         {
-            if (BookFrame.IsVisible)
+            if (BookCover.IsVisible)
             {
-                BookFrame.IsVisible = false;
+                BookCover.IsVisible = false;
                 ContentView.IsVisible = true;
                 ChapterName.IsVisible = false;
                 ContentView.ScrollTo(ContentView.SelectedItem, ScrollToPosition.MakeVisible, false);
             }
             else
             {
-                BookFrame.IsVisible = true;
+                BookCover.IsVisible = true;
                 ContentView.IsVisible = false;
                 ChapterName.IsVisible = true;
             }
@@ -879,11 +879,14 @@ namespace SyncBookPlayer
             PlayerMenu.TranslationY = Window.Height;
             PlayerMenu.IsVisible = true;
 #if ANDROID
-            Dispatcher.Dispatch(() =>
+            if (BookCover.IsVisible)
             {
-                BookCover.IsVisible = false;
-                BookCover.IsVisible =true;
-            });
+                Dispatcher.Dispatch(() =>
+                {
+                    BookCover.IsVisible = false;
+                    BookCover.IsVisible = true;
+                });
+            }
 #endif
             if (Player2.IsPlaying)
                 timer.Start();
