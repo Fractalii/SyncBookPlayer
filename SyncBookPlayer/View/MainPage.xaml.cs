@@ -105,6 +105,7 @@ namespace SyncBookPlayer
                 toolbar.IsVisible = false;
                 StartLoading.IsRunning = false;
                 ChooseFolderbtn.IsVisible = true;
+                BookList.IsVisible = false;
             }
             else
             {
@@ -363,6 +364,7 @@ namespace SyncBookPlayer
 
 
                     ChooseFolderbtn.IsVisible = false;
+                    BookList.IsVisible = true;
                     toolbar.IsVisible = true;
                 }
                 catch { }
@@ -449,7 +451,7 @@ namespace SyncBookPlayer
                 //#if ANDROID
                 //                Menu.IsVisible = false;
                 //#endif
-                ((CollectionView)sender).SelectedItem = null;
+                //((CollectionView)sender).SelectedItem = null;
 
             }
         }
