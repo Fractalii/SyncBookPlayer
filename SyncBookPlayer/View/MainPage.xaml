@@ -1,49 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="SyncBookPlayer.MainPage"
-             xmlns:converters="clr-namespace:SyncBookPlayer.Extra"
-             xmlns:viewmodel="clr-namespace:SyncBookPlayer.ViewModel"
-             xmlns:model="clr-namespace:SyncBookPlayer.Model"
-             xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
-             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
-             xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui"
-             x:DataType="viewmodel:PlayerViewModel"
-             Shell.NavBarIsVisible="False"
-             xmlns:tabview="clr-namespace:MPowerKit.TabView;assembly=MPowerKit.TabView">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" x:Class="SyncBookPlayer.MainPage" xmlns:converters="clr-namespace:SyncBookPlayer.Extra" xmlns:viewmodel="clr-namespace:SyncBookPlayer.ViewModel" xmlns:model="clr-namespace:SyncBookPlayer.Model" xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui" xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui" x:DataType="viewmodel:PlayerViewModel" Shell.NavBarIsVisible="False" xmlns:tabview="clr-namespace:MPowerKit.TabView;assembly=MPowerKit.TabView">
 
     <ContentPage.Resources>
         <toolkit:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />
         <converters:SecondsToStringConverter x:Key="SecondsToStringConverter" />
     </ContentPage.Resources>
     <ContentPage.Behaviors>
-        <mct:StatusBarBehavior x:Name="statusBar"/>
+        <mct:StatusBarBehavior x:Name="statusBar" />
     </ContentPage.Behaviors>
 
     <Grid>
-        <ActivityIndicator IsRunning="true" Color="White" x:Name="StartLoading" WidthRequest="80" HeightRequest="80"/>
+        <ActivityIndicator IsRunning="true" Color="White" x:Name="StartLoading" WidthRequest="80" HeightRequest="80" />
         <Grid Grid.Row="0" x:Name="Menu" RowDefinitions="40,*,auto">
             <Grid Grid.Row="0" ColumnDefinitions="auto,*" x:Name="toolbar">
-                <Label Text="Библиотека" HorizontalOptions="Start" Grid.Column="0" VerticalOptions="Center" FontSize="25" Margin="15,0,0,0" TextColor="{StaticResource Gray100}"/>
+                <Label Text="Библиотека" HorizontalOptions="Start" Grid.Column="0" VerticalOptions="Center" FontSize="25" Margin="15,0,0,0" TextColor="{StaticResource Gray100}" />
                 <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End">
-                    <ImageButton Source="speedplus.png" BackgroundColor="Transparent" WidthRequest="40" Clicked="Button_Clicked_4"/>
-                    <ImageButton Source="folder.png" BackgroundColor="Transparent" WidthRequest="40" Clicked="PickFolder"/>
-                    <ImageButton Source="user.png" BackgroundColor="Transparent" WidthRequest="40" Clicked="Button_Clicked_5"/>
-                    <ImageButton Source="sync.png" BackgroundColor="Transparent" WidthRequest="40" Margin="0,0,10,0" Clicked="Button_Clicked_3"/>
+                    <ImageButton Source="speedplus.png" BackgroundColor="Transparent" WidthRequest="40" Clicked="Button_Clicked_4" />
+                    <ImageButton Source="folder.png" BackgroundColor="Transparent" WidthRequest="40" Clicked="PickFolder" />
+                    <ImageButton Source="user.png" BackgroundColor="Transparent" WidthRequest="40" Clicked="Button_Clicked_5" />
+                    <ImageButton Source="sync.png" BackgroundColor="Transparent" WidthRequest="40" Margin="0,0,10,0" Clicked="Button_Clicked_3" />
                 </HorizontalStackLayout>
             </Grid>
-            <Button Grid.Row="1"
-            Text="Выберите папку"
-            x:Name="ChooseFolderbtn"
-            Clicked="PickFolder" MaximumWidthRequest="300"
-            IsVisible="false" VerticalOptions="Center"></Button>
+            <Button Grid.Row="1" Text="Выберите папку" x:Name="ChooseFolderbtn" Clicked="PickFolder" MaximumWidthRequest="300" IsVisible="false" VerticalOptions="Center"></Button>
 
-            <tabview:TabView x:Name="BookList" Grid.Row="1"
-                 SelectedHeaderBackgroundColor="Transparent">
+            <tabview:TabView x:Name="BookList" Grid.Row="1" SelectedHeaderBackgroundColor="Transparent">
                 <tabview:TabView.HeaderItemsLayout>
-                    <Grid ColumnDefinitions="*,*,*"
-              WidthRequest="{Binding Width, Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type ScrollView}}}" />
+                    <Grid ColumnDefinitions="*,*,*" WidthRequest="{Binding Width, Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type ScrollView}}}" />
                 </tabview:TabView.HeaderItemsLayout>
                 <!--<tabview:TabView.HeaderTemplate>
                     <DataTemplate>
@@ -73,89 +55,90 @@
                         </Grid>
                     </DataTemplate>
                 </tabview:TabView.SelectedHeaderTemplate>-->
-                <tabview:TabViewItem Column="0"
-                         Header="Слушаете">
-                    <CollectionView x:Name="StartedView"
-    ItemsLayout="VerticalList"
-    SelectionMode="Single"
-    HorizontalScrollBarVisibility="Never"
-    SelectionChanged="libraryList_SelectionChanged"
-                x:DataType="model:Book">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid MaximumHeightRequest="190" Padding="0,5,0,5" ColumnDefinitions="auto,*">
-                                    <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="130" MinimumWidthRequest="150" Grid.Column="0" DownsampleToViewSize="True" Margin="5,0,5,0">
-                                            <ffimageloading:CachedImage.Transformations>
-                                                <fftransformations:RoundedTransformation Radius="10"/>
-                                            </ffimageloading:CachedImage.Transformations>
-                                        </ffimageloading:CachedImage>
-                                    <Image Source="download.png" Grid.Column="0" HorizontalOptions="End" VerticalOptions="Start" HeightRequest="35" Margin="0,0,8,0" IsVisible="{Binding Downloaded}"/>
-                                    <VerticalStackLayout Grid.Column="1">
-                                        <Label Text="{Binding Title}" FontSize="18" MinimumHeightRequest="100"/>
-                                        <Label Text="{Binding Author}" TextColor="LightGray"/>
-                                    </VerticalStackLayout>
-                                </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                </tabview:TabViewItem>
-
-                <tabview:TabViewItem x:Name="secondTab"
-                         Column="1">
+                <tabview:TabViewItem Column="0" x:Name="firstTab">
                     <tabview:TabViewItem.Header>
-                        <Label HorizontalOptions="Center"
-                       Text="Second Tab"
-                       VerticalOptions="Center">
+                        <Label HorizontalOptions="Center" Text="Слушаете" VerticalOptions="Center">
                             <Label.Triggers>
-                                <DataTrigger Binding="{Binding IsSelected, Source={x:Reference secondTab}}"
-                                     TargetType="Label"
-                                     Value="False">
-                                        <Setter Property="TextColor"
-                                    Value="Red" />
-                                    </DataTrigger>
-                                </Label.Triggers>
-                            </Label>
+                                <DataTrigger Binding="{Binding IsSelected, Source={x:Reference firstTab}}" TargetType="Label" Value="True">
+                                    <Setter Property="FontAttributes" Value="Bold" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
                     </tabview:TabViewItem.Header>
-
-                    <CollectionView x:Name="NotStartedView"
-                ItemsLayout="HorizontalList"
-                SelectionMode="Single"
-                HorizontalScrollBarVisibility="Never"
-                SelectionChanged="libraryList_SelectionChanged"
-                x:DataType="model:Book">
+                    <CollectionView x:Name="StartedView" ItemsLayout="VerticalList" SelectionMode="Single" SelectionChanged="libraryList_SelectionChanged" x:DataType="model:Book">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <VerticalStackLayout MaximumWidthRequest="160" Margin="3,0,3,0" >
-                                    <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160" DownsampleToViewSize="True">
+                                <Grid MaximumHeightRequest="190" Padding="0,5,0,5" ColumnDefinitions="auto,*">
+                                    <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="130" MinimumWidthRequest="150" Grid.Column="0" DownsampleToViewSize="True" Margin="5,0,5,0">
                                         <ffimageloading:CachedImage.Transformations>
-                                            <fftransformations:RoundedTransformation Radius="10"/>
+                                            <fftransformations:RoundedTransformation Radius="10" />
                                         </ffimageloading:CachedImage.Transformations>
                                     </ffimageloading:CachedImage>
-                                    <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation" MaximumWidthRequest="140"/>
-                                </VerticalStackLayout>
+                                    <Image Source="download.png" Grid.Column="0" HorizontalOptions="End" VerticalOptions="Start" HeightRequest="35" Margin="0,0,8,0" IsVisible="{Binding Downloaded}" />
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <Label Text="{Binding Title}" FontSize="18" MinimumHeightRequest="100" />
+                                        <Label Text="{Binding Author}" TextColor="LightGray" />
+                                    </VerticalStackLayout>
+                                </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </tabview:TabViewItem>
 
-                <tabview:TabViewItem Column="2"
-                         Header="Third Tab">
-                    <CollectionView x:Name="FinishedView"
-    ItemsLayout="HorizontalList"
-    SelectionMode="Single"
-    HorizontalScrollBarVisibility="Never"
-    SelectionChanged="libraryList_SelectionChanged"
-    x:DataType="model:Book">
+                <tabview:TabViewItem x:Name="secondTab" Column="1">
+                    <tabview:TabViewItem.Header>
+                        <Label HorizontalOptions="Center" Text="Найдено" VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected, Source={x:Reference secondTab}}" TargetType="Label" Value="True">
+                                    <Setter Property="FontAttributes" Value="Bold" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </tabview:TabViewItem.Header>
+
+                    <CollectionView x:Name="NotStartedView" ItemsLayout="VerticalList" SelectionMode="Single" SelectionChanged="libraryList_SelectionChanged" x:DataType="model:Book">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <VerticalStackLayout MaximumWidthRequest="160" Margin="3,0,3,0" >
-                                    <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="150" MinimumWidthRequest="160" DownsampleToViewSize="True">
+                                <Grid MaximumHeightRequest="190" Padding="0,5,0,5" ColumnDefinitions="auto,*">
+                                    <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="130" MinimumWidthRequest="150" Grid.Column="0" DownsampleToViewSize="True" Margin="5,0,5,0">
                                         <ffimageloading:CachedImage.Transformations>
-                                            <fftransformations:RoundedTransformation Radius="10"/>
+                                            <fftransformations:RoundedTransformation Radius="10" />
                                         </ffimageloading:CachedImage.Transformations>
                                     </ffimageloading:CachedImage>
-                                    <Label HorizontalOptions="Center" Text="{Binding Title}" LineBreakMode="TailTruncation" MaximumWidthRequest="140"/>
-                                </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <Label Text="{Binding Title}" FontSize="18" MinimumHeightRequest="100" />
+                                        <Label Text="{Binding Author}" TextColor="LightGray" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </tabview:TabViewItem>
+
+                <tabview:TabViewItem Column="2" x:Name="thirdTab">
+                    <tabview:TabViewItem.Header>
+                        <Label HorizontalOptions="Center" Text="Прослушано" VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected, Source={x:Reference thirdTab}}" TargetType="Label" Value="True">
+                                    <Setter Property="FontAttributes" Value="Bold" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </tabview:TabViewItem.Header>
+                    <CollectionView x:Name="FinishedView" ItemsLayout="VerticalList" SelectionMode="Single" SelectionChanged="libraryList_SelectionChanged" x:DataType="model:Book">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid MaximumHeightRequest="190" Padding="0,5,0,5" ColumnDefinitions="auto,*">
+                                    <ffimageloading:CachedImage Source="{Binding Cover}" HeightRequest="130" MinimumWidthRequest="150" Grid.Column="0" DownsampleToViewSize="True" Margin="5,0,5,0">
+                                        <ffimageloading:CachedImage.Transformations>
+                                            <fftransformations:RoundedTransformation Radius="10" />
+                                        </ffimageloading:CachedImage.Transformations>
+                                    </ffimageloading:CachedImage>
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <Label Text="{Binding Title}" FontSize="18" MinimumHeightRequest="100" />
+                                        <Label Text="{Binding Author}" TextColor="LightGray" />
+                                    </VerticalStackLayout>
+                                </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
@@ -231,7 +214,7 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>-->
 
-                <!--<CollectionView x:Name="libraryList"
+            <!--<CollectionView x:Name="libraryList"
                                 SelectionMode="Single"
                                 SelectionChanged="libraryList_SelectionChanged">
                     <CollectionView.ItemTemplate>
@@ -247,30 +230,30 @@
                     
                     </CollectionView.ItemTemplate>
                 </CollectionView>-->
-                    <!--<Button WidthRequest="180" HeightRequest="60" Margin="0,0,0,10" Text="Скачать с YouTube" Clicked="Button_Clicked_4" FontSize="Body"/>-->
+            <!--<Button WidthRequest="180" HeightRequest="60" Margin="0,0,0,10" Text="Скачать с YouTube" Clicked="Button_Clicked_4" FontSize="Body"/>-->
             <!--</VerticalStackLayout>-->
             <!--</ScrollView> -->
             <Grid x:Name="SmallPlay" Grid.Row="2" BackgroundColor="#1c1c1c" HeightRequest="70" ColumnDefinitions="auto,*,auto" IsVisible="false">
                 <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
                 </Grid.GestureRecognizers>
                 <ffimageloading:CachedImage Grid.Column="0" HeightRequest="60" WidthRequest="60" Source="{Binding Book.Cover}" Margin="10,0,0,0" DownsampleToViewSize="True">
                     <ffimageloading:CachedImage.Transformations>
-                        <fftransformations:RoundedTransformation Radius="10"/>
+                        <fftransformations:RoundedTransformation Radius="10" />
                     </ffimageloading:CachedImage.Transformations>
                 </ffimageloading:CachedImage>
                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="20,0,0,0">
-                <Label Text="{Binding Book.Title}"/>
-                <Label Text="{Binding Source={x:Reference ContentView}, Path=SelectedItem.Title}" TextColor="{StaticResource Gray200}"/>
+                    <Label Text="{Binding Book.Title}" />
+                    <Label Text="{Binding Source={x:Reference ContentView}, Path=SelectedItem.Title}" TextColor="{StaticResource Gray200}" />
                 </VerticalStackLayout>
-                <ImageButton x:Name="PlaySmall" Grid.Column="2" HorizontalOptions="End" WidthRequest="50" HeightRequest="50" Clicked="Button_Clicked" Source="smallpause.png" BackgroundColor="Transparent" Margin="0,0,10,0"/>
+                <ImageButton x:Name="PlaySmall" Grid.Column="2" HorizontalOptions="End" WidthRequest="50" HeightRequest="50" Clicked="Button_Clicked" Source="smallpause.png" BackgroundColor="Transparent" Margin="0,0,10,0" />
             </Grid>
         </Grid>
 
 
         <Grid x:Name="PlayerMenu" RowDefinitions="Auto, Auto, 2*,Auto,Auto,auto,auto,auto" IsVisible="false" Grid.Row="0" ZIndex="2" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
-            <ImageButton Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Padding="0" Source="wrap.png" BackgroundColor="Transparent" Margin="10,0,0,0" HeightRequest="50"/>
-            <Label Text="{Binding Percent, StringFormat='{0}%'}" Grid.Row="1" HorizontalOptions="Center" FontSize="Subtitle"/>
+            <ImageButton Grid.Row="0" WidthRequest="50" HorizontalOptions="Start" Clicked="Button_Clicked_1" Padding="0" Source="wrap.png" BackgroundColor="Transparent" Margin="10,0,0,0" HeightRequest="50" />
+            <Label Text="{Binding Percent, StringFormat='{0}%'}" Grid.Row="1" HorizontalOptions="Center" FontSize="Subtitle" />
             <!--<Frame x:Name="BookFrame"
             Grid.Row="2"
             MaximumHeightRequest="350"
@@ -279,12 +262,9 @@
             BorderColor="Transparent"
             BackgroundColor="Transparent"
             CornerRadius="20">-->
-            <ffimageloading:CachedImage 
-                x:Name="BookCover"
-                Grid.Row="2"
-                MaximumHeightRequest="350">
+            <ffimageloading:CachedImage x:Name="BookCover" Grid.Row="2" MaximumHeightRequest="350">
                 <ffimageloading:CachedImage.Transformations>
-                    <fftransformations:RoundedTransformation Radius="10"/>
+                    <fftransformations:RoundedTransformation Radius="10" />
                 </ffimageloading:CachedImage.Transformations>
             </ffimageloading:CachedImage>
             <!--</Frame>-->
@@ -298,83 +278,42 @@
                 </ListView.ItemTemplate>
             </ListView>
             <Label x:Name="ChapterName" Grid.Row="3" FontSize="Title" Margin="20,0,0,0" Text="{Binding Source={x:Reference ContentView}, Path=SelectedItem.Title}"></Label>
-            <Slider
-            VerticalOptions="End"
-            Margin="20,0,20,0"
-    x:Name="PositionSlider"
-    Grid.Row="4"
-    MaximumTrackColor="LightGray"
-    DragStarted="Slider_DragStarted"
-    DragCompleted="Slider_DragCompleted"
-            />
-            <Grid ColumnDefinitions="*,*,*"
-              Margin="0,0,0,15"
-              Grid.Row="5">
-                <Label
-                Margin="20,0,0,0"
-                HorizontalOptions="Start"
-                Text="{Binding Source={x:Reference PositionSlider}, Path=Value, Converter={StaticResource SecondsToStringConverter}}">
+            <Slider VerticalOptions="End" Margin="20,0,20,0" x:Name="PositionSlider" Grid.Row="4" MaximumTrackColor="LightGray" DragStarted="Slider_DragStarted" DragCompleted="Slider_DragCompleted" />
+            <Grid ColumnDefinitions="*,*,*" Margin="0,0,0,15" Grid.Row="5">
+                <Label Margin="20,0,0,0" HorizontalOptions="Start" Text="{Binding Source={x:Reference PositionSlider}, Path=Value, Converter={StaticResource SecondsToStringConverter}}">
                 </Label>
-                <Label
-                x:Name="beforeSec"
-    Grid.Column="1"
-    HorizontalOptions="Center"
-    Text="{Binding ToListen, Converter={StaticResource SecondsToStringConverter}, StringFormat='-{0}'}">
+                <Label x:Name="beforeSec" Grid.Column="1" HorizontalOptions="Center" Text="{Binding ToListen, Converter={StaticResource SecondsToStringConverter}, StringFormat='-{0}'}">
                 </Label>
-                <Label
-                Margin="0,0,20,0"
-                Grid.Column="2"
-                HorizontalOptions="End"
-                Text="{Binding Source={x:Reference PositionSlider}, Path=Maximum, Converter={StaticResource SecondsToStringConverter}}">
+                <Label Margin="0,0,20,0" Grid.Column="2" HorizontalOptions="End" Text="{Binding Source={x:Reference PositionSlider}, Path=Maximum, Converter={StaticResource SecondsToStringConverter}}">
                 </Label>
             </Grid>
 
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="50" Grid.Row="6" Margin="0,00,0,20">
-                <ImageButton
-            x:Name="BackBtn"
-            Source="back.png"
-            BackgroundColor = "Transparent"
-            WidthRequest = "35"
-            HeightRequest = "30"
-            Clicked="BackBtn_Clicked"
-    ></ImageButton>
+                <ImageButton x:Name="BackBtn" Source="back.png" BackgroundColor="Transparent" WidthRequest="35" HeightRequest="30" Clicked="BackBtn_Clicked"></ImageButton>
 
-                <ImageButton 
-            BackgroundColor="Transparent"
-            x:Name="PlayBtn"
-            Source="pause.png"
-                WidthRequest = "80"
-                HeightRequest = "80"
-            Clicked="Button_Clicked"></ImageButton>
+                <ImageButton BackgroundColor="Transparent" x:Name="PlayBtn" Source="pause.png" WidthRequest="80" HeightRequest="80" Clicked="Button_Clicked"></ImageButton>
 
 
-                <ImageButton
-            x:Name="ForwardBtn"
-            Source="forward.png"
-            BackgroundColor = "Transparent"
-                WidthRequest = "35"
-                HeightRequest = "30"
-            Clicked="ForwardBtn_Clicked"
-            ></ImageButton>
+                <ImageButton x:Name="ForwardBtn" Source="forward.png" BackgroundColor="Transparent" WidthRequest="35" HeightRequest="30" Clicked="ForwardBtn_Clicked"></ImageButton>
 
 
             </HorizontalStackLayout>
 
             <HorizontalStackLayout Grid.Row="7" Padding="0,0,0,10" Spacing="5" VerticalOptions="End" Margin="10,0,0,-8">
-                <ImageButton Source="speedminus.png" Clicked="OnSpeedMinusClicked" BackgroundColor="Transparent" HeightRequest="50" WidthRequest="50"/>
+                <ImageButton Source="speedminus.png" Clicked="OnSpeedMinusClicked" BackgroundColor="Transparent" HeightRequest="50" WidthRequest="50" />
                 <Label VerticalOptions="Center">
                     <Label.FormattedText>
                         <FormattedString>
-                            <Span Text="x" FontAttributes="Bold"/>
-                            <Span x:Name="spt" FontAttributes="Bold"/>
+                            <Span Text="x" FontAttributes="Bold" />
+                            <Span x:Name="spt" FontAttributes="Bold" />
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
 
 
-                <ImageButton Source="speedplus.png" Clicked="OnSpeedPlusClicked" BackgroundColor="Transparent" HeightRequest="50" WidthRequest="50" HorizontalOptions="End"/>
+                <ImageButton Source="speedplus.png" Clicked="OnSpeedPlusClicked" BackgroundColor="Transparent" HeightRequest="50" WidthRequest="50" HorizontalOptions="End" />
             </HorizontalStackLayout>
-            <ImageButton Grid.Row="7" WidthRequest="50" HeightRequest="50" HorizontalOptions="End" Clicked="Button_Clicked_2" Source="menu.png" BackgroundColor="Transparent" Margin="0,0,10,3" x:Name="MenuBtn"/>
+            <ImageButton Grid.Row="7" WidthRequest="50" HeightRequest="50" HorizontalOptions="End" Clicked="Button_Clicked_2" Source="menu.png" BackgroundColor="Transparent" Margin="0,0,10,3" x:Name="MenuBtn" />
         </Grid>
 
     </Grid>
