@@ -262,7 +262,7 @@
             BorderColor="Transparent"
             BackgroundColor="Transparent"
             CornerRadius="20">-->
-            <ffimageloading:CachedImage x:Name="BookCover" Grid.Row="2" MaximumHeightRequest="350">
+            <ffimageloading:CachedImage x:Name="BookCover" Grid.Row="2" MaximumHeightRequest="300">
                 <ffimageloading:CachedImage.Transformations>
                     <fftransformations:RoundedTransformation Radius="10" />
                 </ffimageloading:CachedImage.Transformations>
