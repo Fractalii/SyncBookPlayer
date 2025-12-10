@@ -45,7 +45,7 @@ public partial class Account : ContentPage
             if (allowlogin) {
                 try
                 {
-                    string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
+                    string connString = Settings.database_connection + "SSLMode=Prefer;Timeout=10";
                     var conn = new NpgsqlConnection(connString);
                     await conn.OpenAsync();
                     using (var command = new NpgsqlCommand($"SELECT id FROM accounts WHERE login = @login AND password = @password;", conn))
@@ -79,7 +79,7 @@ public partial class Account : ContentPage
             if (allowlogin)
             {
                 try { 
-                    string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
+                    string connString = Settings.database_connection + "SSLMode=Prefer;Timeout=10";
                     var conn = new NpgsqlConnection(connString);
                     await conn.OpenAsync();
                     using (var command = new NpgsqlCommand($"INSERT INTO accounts (login, password) VALUES (@login, @password) RETURNING id;", conn))
@@ -154,7 +154,7 @@ public partial class Account : ContentPage
         {
             try
             {
-                string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer;Timeout=10";
+                string connString = Settings.database_connection + "SSLMode=Prefer;Timeout=10";
                 var conn = new NpgsqlConnection(connString);
                 await conn.OpenAsync();
                 using (var command = new NpgsqlCommand($"SELECT login FROM accounts WHERE id = {login};", conn))

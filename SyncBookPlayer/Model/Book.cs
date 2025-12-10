@@ -58,8 +58,6 @@ namespace SyncBookPlayer.Model
 
 
             /*
-             Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Database=neondb;User Id=DAROMON;Password=NVgYsqK8hyP6;Port=5432 
-             string connectionString = "postgresql://DAROMON@ep-falling-cake-416088.eu-central-1.aws.neon.tech/neondb?sslmode=require";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -81,7 +79,7 @@ namespace SyncBookPlayer.Model
             {
                 try
                 {
-                    string connString = "Server=ep-falling-cake-416088.eu-central-1.aws.neon.tech;Username=DAROMON;Database=neondb;Port=5432;Password=NVgYsqK8hyP6;SSLMode=Prefer";
+                    string connString = Settings.database_connection + "SSLMode=Prefer";
                     using (var conn = new NpgsqlConnection(connString))
                     {
                         //Console.Out.WriteLine("Opening connection");
