@@ -107,7 +107,7 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="MPowerKit.TabView" Version="1.2.1" />
-		<PackageReference Include="Npgsql" Version="8.0.1" />
+		<PackageReference Include="Npgsql" Version="10.0.0" />
 		<PackageReference Include="SkiaSharp" Version="2.88.6" />
 		<PackageReference Include="YoutubeReExplodeZ" Version="7.0.6" />
 		<PackageReference Include="z440.atl.core" Version="5.25.0" />
