@@ -128,7 +128,7 @@ namespace SyncBookPlayer
             {
                 try
                 {
-                    string connString = Settings.database_connection + "SSLMode=Prefer;Timeout=10";
+                    string connString = Settings.database_connection + "SSLMode=Prefer;Timeout=15";
                     var conn = new NpgsqlConnection(connString);
                     await conn.OpenAsync();
                     /*using (var command = new NpgsqlCommand("CREATE TABLE IF NOT EXISTS fractalis ( folder_name TEXT PRIMARY KEY, json_data TEXT);", conn))
